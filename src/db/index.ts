@@ -23,7 +23,10 @@ async function createDatabase(): Promise<Database> {
 
   const { drizzle } = await import("drizzle-orm/pglite");
   const { PGlite } = await import("@electric-sql/pglite");
-  const client = new PGlite(process.env.PGLITE_DIR ?? ".pglite");
+  // Use in-memory for Vercel (read-only filesystem), file-based for local dev
+  const isProduction = process.env.VERCEL === "1";
+  const dbPath = isProduction ? ":memory:" : (process.env.PGLITE_DIR ?? ".pglite");
+  const client = new PGlite(dbPath);
   return drizzle(client, { schema }) as unknown as Database;
 }
 
