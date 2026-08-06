@@ -119,9 +119,9 @@ export function NewProjectForm({ hasKey }: { hasKey: boolean }) {
     createProject,
     {},
   );
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const stackRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
+  const stackRef = useRef<HTMLInputElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   return (
     <Card className="p-6">

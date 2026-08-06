@@ -11,7 +11,7 @@ interface TaskEditModalProps {
   task: {
     id: string;
     title: string;
-    description: string;
+    description: string | null;
     optimisticHours: number;
     likelyHours: number;
     pessimisticHours: number;
