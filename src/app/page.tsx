@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, ListTree } from "lucide-react";
 
-import { NewProjectForm } from "@/components/new-project-form";
+import { GuidedForm } from "@/components/guided-form";
 import { Card, EmptyState, SectionTitle } from "@/components/ui";
 import { listProjects } from "@/db/queries";
 import { hasApiKey } from "@/lib/planner";
@@ -27,7 +27,7 @@ export default async function Home() {
 
       <section>
         <SectionTitle>Novo projeto</SectionTitle>
-        <NewProjectForm hasKey={hasApiKey()} />
+        <GuidedForm hasKey={hasApiKey()} />
       </section>
 
       <section>
