@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useRef, useState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { Loader2, Sparkles } from "lucide-react";
 
 import { createProject, type FormState } from "@/app/actions";
 import { Button, Card, Field, Input } from "@/components/ui";
+import { suggestStackFromScope, suggestIntegrationsFromScope } from "@/lib/suggestions";
 
 function buildDescription(data: Record<string, any>): string {
   const parts = [];
@@ -74,6 +75,32 @@ function SubmitButton({ formRef }: { formRef: React.RefObject<HTMLFormElement | 
 }
 
 export function GuidedForm({ hasKey }: { hasKey: boolean }) {
+  const [formValues, setFormValues] = useState({
+    problem: "",
+    users: "",
+    existing: "",
+    needed: "",
+    technologies: "",
+    integrations: "",
+    requireRealtime: false,
+    requireScale: false,
+    requireOffline: false,
+    requirePayments: false,
+    requireAI: false,
+  });
+
+  const [suggestedStack, setSuggestedStack] = useState("");
+  const [suggestedIntegrations, setSuggestedIntegrations] = useState<string[]>([]);
+
+  // Atualizar sugestões em tempo real
+  useEffect(() => {
+    const stack = suggestStackFromScope(formValues);
+    setSuggestedStack(stack);
+
+    const integrations = suggestIntegrationsFromScope(formValues);
+    setSuggestedIntegrations(integrations);
+  }, [formValues]);
+
   const [state, formAction] = useActionState<FormState, FormData>(
     async (_prev, formData) => {
       const data = {
@@ -113,7 +140,6 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
   );
 
   const formRef = useRef<HTMLFormElement | null>(null);
-  const [integrations, setIntegrations] = useState("");
 
   return (
     <Card className="p-6">
@@ -150,6 +176,7 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
               required
               placeholder="Descreva o problema atual"
               maxLength={300}
+              onChange={(e) => setFormValues({ ...formValues, problem: e.target.value })}
             />
           </Field>
 
@@ -177,6 +204,7 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
               required
               placeholder="Descrever o que será construído"
               maxLength={300}
+              onChange={(e) => setFormValues({ ...formValues, needed: e.target.value })}
             />
           </Field>
         </div>
@@ -205,6 +233,13 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
               maxLength={200}
             />
           </Field>
+
+          {suggestedStack && (
+            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-3 text-sm text-ink-300">
+              <p className="mb-2 font-medium text-ink-200">💡 Stack sugerido para seu projeto:</p>
+              <p className="text-xs leading-relaxed">{suggestedStack}</p>
+            </div>
+          )}
         </div>
 
         {/* Requisitos especiais */}
@@ -215,23 +250,48 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
 
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="requireRealtime" className="size-4" />
+              <input
+                type="checkbox"
+                name="requireRealtime"
+                className="size-4"
+                onChange={(e) => setFormValues({ ...formValues, requireRealtime: e.target.checked })}
+              />
               <span className="text-sm text-ink-200">Precisa de tempo real (chat, notificações)</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="requireScale" className="size-4" />
+              <input
+                type="checkbox"
+                name="requireScale"
+                className="size-4"
+                onChange={(e) => setFormValues({ ...formValues, requireScale: e.target.checked })}
+              />
               <span className="text-sm text-ink-200">Precisa de escala alta (muitos usuários/dados)</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="requireOffline" className="size-4" />
+              <input
+                type="checkbox"
+                name="requireOffline"
+                className="size-4"
+                onChange={(e) => setFormValues({ ...formValues, requireOffline: e.target.checked })}
+              />
               <span className="text-sm text-ink-200">Precisa funcionar offline</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="requirePayments" className="size-4" />
+              <input
+                type="checkbox"
+                name="requirePayments"
+                className="size-4"
+                onChange={(e) => setFormValues({ ...formValues, requirePayments: e.target.checked })}
+              />
               <span className="text-sm text-ink-200">Precisa processar pagamentos</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" name="requireAI" className="size-4" />
+              <input
+                type="checkbox"
+                name="requireAI"
+                className="size-4"
+                onChange={(e) => setFormValues({ ...formValues, requireAI: e.target.checked })}
+              />
               <span className="text-sm text-ink-200">Precisa de IA/ML</span>
             </label>
           </div>
@@ -246,27 +306,21 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
           <Field label="Quais sistemas/APIs precisa integrar?" hint="Ex: ERP, CRM, Stripe, Slack">
             <Input
               name="integrations"
-              placeholder="Listar integrações necessárias"
+              placeholder="Listar integrações necessárias (ou deixe em branco)"
               maxLength={300}
-              onChange={(e) => setIntegrations(e.target.value)}
+              onChange={(e) => setFormValues({ ...formValues, integrations: e.target.value })}
             />
           </Field>
 
-          {integrations && (
-            <div className="mt-3 rounded-md border border-ink-600 bg-ink-800/50 p-3 text-sm text-ink-300">
-              <p className="mb-2 font-medium text-ink-200">Sugestões baseadas em suas integrações:</p>
-              <ul className="space-y-1 text-xs">
-                {integrations.toLowerCase().includes("erp") && (
-                  <li>✓ Message Queue (RabbitMQ/Redis) para sincronização</li>
-                )}
-                {integrations.toLowerCase().includes("pagamento") ||
-                  integrations.toLowerCase().includes("stripe")
-                  ? <li>✓ Webhooks para notificações de transações</li>
-                  : null}
-                {integrations.toLowerCase().includes("slack") && (
-                  <li>✓ OAuth2 para autenticação via Slack</li>
-                )}
-                {integrations && <li>✓ API Gateway para gerenciar integrações</li>}
+          {suggestedIntegrations.length > 0 && (
+            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-3 text-sm text-ink-300">
+              <p className="mb-3 font-medium text-ink-200">💡 Integrações sugeridas para seu projeto:</p>
+              <ul className="space-y-2">
+                {suggestedIntegrations.map((integration, idx) => (
+                  <li key={idx} className="text-xs leading-relaxed">
+                    {integration}
+                  </li>
+                ))}
               </ul>
             </div>
           )}
