@@ -1,26 +1,68 @@
 @import "tailwindcss";
 
+@theme {
+  /* Escala neutra puxada para o navy da marca, não para o cinza puro. */
+  --color-ink-950: #080d1a;
+  --color-ink-900: #0d1424;
+  --color-ink-850: #111a2d;
+  --color-ink-800: #182238;
+  --color-ink-700: #24304a;
+  --color-ink-600: #35435f;
+  --color-ink-400: #7b87a3;
+  --color-ink-300: #a6b0c6;
+  --color-ink-100: #e6e9f2;
+
+  /* Violeta da marca. O 500 é o da logo e serve para preenchimento sólido;
+     o 300 é a versão clara, para texto e ícones sobre fundo escuro — o 500
+     como texto pequeno não alcança contraste suficiente. */
+  --color-brand-300: #b3a8ff;
+  --color-brand-400: #7361f5;
+  --color-brand-500: #5b45e8;
+  --color-brand-600: #4633c2;
+
+  --color-go-400: #4ade80;
+  --color-warn-400: #fb923c;
+  --color-stop-400: #f87171;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo,
+    monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(
+      ellipse 80% 50% at 50% -10%,
+      rgba(91, 69, 232, 0.14),
+      transparent
+    ),
+    var(--color-ink-950);
+  color: var(--color-ink-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand-500);
+  color: #ffffff;
+}
+
+/* Números tabulares para que as estimativas alinhem em coluna. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
 }

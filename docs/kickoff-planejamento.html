@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Kickoff — Documentação de Planejamento</title>
+<style>
+@page { size: A4; margin: 20mm 18mm 18mm 18mm; }
+@page :first { margin: 0; }
+
+* { box-sizing: border-box; }
+
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 10.2pt;
+  line-height: 1.55;
+  color: #16191d;
+}
+
+/* ---------- capa ---------- */
+.cover {
+  page-break-after: always;
+  height: 297mm;
+  padding: 38mm 24mm 20mm;
+  background: #0f1216;
+  color: #eef1f5;
+  display: flex;
+  flex-direction: column;
+}
+.cover .mark {
+  display: inline-grid;
+  place-items: center;
+  width: 15mm; height: 15mm;
+  border-radius: 3.5mm;
+  background: #f5a524;
+  color: #0f1216;
+  font-size: 24pt; font-weight: 700;
+  margin-bottom: 14mm;
+}
+.cover h1 { font-size: 34pt; line-height: 1.08; margin: 0 0 5mm; letter-spacing: -0.6pt; }
+.cover .sub { font-size: 13pt; color: #a9b3c0; max-width: 120mm; margin: 0 0 auto; line-height: 1.5; }
+.cover .numbers { display: flex; gap: 9mm; margin: 0 0 12mm; flex-wrap: wrap; }
+.cover .numbers div { border-left: 2px solid #f5a524; padding-left: 4mm; }
+.cover .numbers .k { display: block; font-size: 8.5pt; letter-spacing: 1pt;
+  text-transform: uppercase; color: #8f9aa8; margin-bottom: 1.5mm; }
+.cover .numbers .v { font-size: 17pt; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cover .meta { font-size: 9.5pt; color: #7f8a99; border-top: 1px solid #2a3038; padding-top: 5mm; }
+
+/* ---------- sumario ---------- */
+.toc { page-break-after: always; padding-top: 4mm; }
+.toc h2 { font-size: 15pt; margin: 0 0 8mm; letter-spacing: -0.2pt; }
+.toc ol { list-style: none; counter-reset: s; padding: 0; margin: 0; }
+.toc li { counter-increment: s; border-bottom: 1px solid #e6e9ee; padding: 3.5mm 0; }
+.toc li::before {
+  content: counter(s, decimal-leading-zero);
+  font-variant-numeric: tabular-nums; color: #c07f10;
+  font-weight: 700; margin-right: 5mm; font-size: 10pt;
+}
+.toc a { color: #16191d; text-decoration: none; font-weight: 600; font-size: 11pt; }
+.toc .d { display: block; margin-left: 12mm; color: #5d6875; font-size: 9.2pt; margin-top: 1mm; }
+
+/* ---------- secoes ---------- */
+section { page-break-before: always; }
+.head { border-bottom: 2px solid #16191d; padding-bottom: 3mm; margin-bottom: 7mm; }
+.head .n { font-size: 8.5pt; letter-spacing: 1.4pt; text-transform: uppercase; color: #c07f10; font-weight: 700; }
+.head h2 { font-size: 21pt; margin: 1.5mm 0 1mm; letter-spacing: -0.4pt; }
+.head p { margin: 0; color: #5d6875; font-size: 10pt; }
+
+h3 { font-size: 13pt; margin: 8mm 0 2.5mm; letter-spacing: -0.2pt; page-break-after: avoid; }
+h4 { font-size: 10.5pt; margin: 6mm 0 2mm; page-break-after: avoid; }
+p { margin: 0 0 3.2mm; }
+ul, ol { margin: 0 0 3.5mm; padding-left: 6mm; }
+li { margin-bottom: 1.4mm; }
+strong { font-weight: 650; }
+a { color: #b06f00; text-decoration: none; }
+
+hr { border: 0; border-top: 1px solid #e6e9ee; margin: 7mm 0; }
+
+table {
+  width: 100%; border-collapse: collapse;
+  margin: 3mm 0 5mm; font-size: 9.2pt;
+  page-break-inside: avoid;
+}
+th, td { border: 1px solid #dde1e8; padding: 2mm 2.6mm; text-align: left; vertical-align: top; }
+th { background: #f4f6f9; font-weight: 650; font-size: 8.8pt;
+     text-transform: uppercase; letter-spacing: 0.4pt; color: #3c4652; }
+td:has(+ td), td { font-variant-numeric: tabular-nums; }
+tbody tr:nth-child(even) { background: #fafbfc; }
+
+blockquote {
+  margin: 4mm 0; padding: 3mm 4mm;
+  border-left: 3px solid #f5a524; background: #fdf7ec;
+  color: #45403a; font-size: 9.6pt;
+  page-break-inside: avoid;
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 8.8pt; background: #f1f3f7;
+  padding: 0.4mm 1.2mm; border-radius: 1mm;
+}
+pre { background: #f4f6f9; border: 1px solid #e2e6ec; border-radius: 1.5mm;
+      padding: 3mm; overflow: hidden; page-break-inside: avoid; }
+pre code { background: none; padding: 0; font-size: 8.6pt; line-height: 1.45; }
+
+input[type=checkbox] { margin-right: 1.5mm; }
+</style></head><body>
+
+<div class="cover">
+  <div class="mark">K</div>
+  <h1>Kickoff</h1>
+  <p class="sub">Documentação de planejamento da ferramenta que transforma a
+  descrição de um projeto de software em plano de execução.</p>
+  <div class="numbers">
+    <div><span class="k">Esforço esperado</span><span class="v">529 h</span></div>
+    <div><span class="k">85% de confiança</span><span class="v">553 h</span></div>
+    <div><span class="k">Duração</span><span class="v">9,2 sem</span></div>
+    <div><span class="k">Marcos</span><span class="v">5</span></div>
+  </div>
+  <div class="meta">Versão de 05/08/2026 &nbsp;·&nbsp; v0 entregue, M1 em aberto
+  &nbsp;·&nbsp; Premissa: 2 pessoas &times; 30 h/semana</div>
+</div>
+
+<div class="toc">
+  <h2>Sumário</h2>
+  <ol><li><a href="#indice">Visão geral e premissas</a><span class="d">Por onde começar, o que assumimos e o que ainda não sabemos</span></li><li><a href="#produto">Produto</a><span class="d">O problema, quem usa, o que está dentro e fora do escopo</span></li><li><a href="#roadmap">Roadmap</a><span class="d">Marcos, critérios de saída e datas projetadas</span></li><li><a href="#backlog">Backlog</a><span class="d">Épicos e tarefas com estimativa de três pontos</span></li><li><a href="#riscos">Riscos</a><span class="d">O que pode dar errado e o que fazemos a respeito</span></li><li><a href="#decisoes">Decisões técnicas</a><span class="d">Arquitetura já definida, com motivo e gatilho de revisão</span></li><li><a href="#processo">Processo</a><span class="d">Cadência, definição de pronto, testes e escopo</span></li></ol>
+</div>
+
+<section id="indice"><div class="head"><div class="n">Documento 01</div><h2>Visão geral e premissas</h2><p>Por onde começar, o que assumimos e o que ainda não sabemos</p></div>
+<p>Documentação de planejamento do próprio Kickoff. A ordem abaixo é a ordem de
+leitura para quem chega no projeto.</p>
+<table>
+<thead>
+<tr>
+<th>Documento</th>
+<th>Para quê</th>
+<th>Quem mantém</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#produto">produto.md</a></td>
+<td>O problema, quem usa, o que está dentro e fora do escopo, como saberemos que deu certo</td>
+<td>Produto</td>
+</tr>
+<tr>
+<td><a href="#roadmap">roadmap.md</a></td>
+<td>As fases, os marcos e as datas projetadas</td>
+<td>Gerência de projeto</td>
+</tr>
+<tr>
+<td><a href="#backlog">backlog.md</a></td>
+<td>Épicos e tarefas com estimativa de três pontos</td>
+<td>Time todo</td>
+</tr>
+<tr>
+<td><a href="#riscos">riscos.md</a></td>
+<td>O que pode dar errado e o que fazemos a respeito</td>
+<td>Gerência de projeto</td>
+</tr>
+<tr>
+<td><a href="#decisoes">decisoes-tecnicas.md</a></td>
+<td>Decisões de arquitetura já tomadas, com o motivo</td>
+<td>Time técnico</td>
+</tr>
+<tr>
+<td><a href="#processo">processo.md</a></td>
+<td>Como trabalhamos: branches, revisão, pronto, cadência</td>
+<td>Time todo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Versão em PDF:</strong> <a href="kickoff-planejamento.pdf">kickoff-planejamento.pdf</a> — os sete
+documentos num arquivo só, para leitura ou impressão. Para regerar depois de
+mudar a documentação:</p>
+<pre><code class="language-bash">python scripts/build-docs-pdf.py
+</code></pre>
+<p>O script monta o HTML de impressão; o PDF sai daí com o Chrome em modo headless
+(veja o cabeçalho do script).</p>
+<h2>Premissas que sustentam todo o resto</h2>
+<p>Estas premissas foram assumidas para produzir números. <strong>Se qualquer uma delas
+for falsa, o roadmap muda</strong> — corrija aqui primeiro e recalcule depois.</p>
+<ol>
+<li><strong>Time de 2 pessoas desenvolvedoras</strong>, 30h semanais efetivas cada (60h/semana
+   de capacidade). Não estão contadas reuniões longas, suporte e férias.</li>
+<li><strong>Início em 06/08/2026</strong>, com a v0 já pronta e funcionando.</li>
+<li><strong>Ferramenta interna agora, produto depois.</strong> Sem requisito de cobrança nesta
+   fase, mas nenhuma decisão de arquitetura pode inviabilizar a virada.</li>
+<li><strong>3 pessoas usando no primeiro trimestre</strong>, em regime de teste.</li>
+<li><strong>Uma pessoa decide escopo.</strong> Sem isso, as estimativas não valem — a maior
+   fonte de atraso em projeto pequeno é decisão travada, não código difícil.</li>
+</ol>
+<h2>Decisões tomadas em 05/08/2026</h2>
+<p>As quatro perguntas em aberto foram respondidas. O que mudou:</p>
+<table>
+<thead>
+<tr>
+<th>Pergunta</th>
+<th>Resposta</th>
+<th>Consequência no plano</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interna ou produto?</td>
+<td>Interna agora; venda depende do desempenho</td>
+<td>Cobrança fica fora da v1. Isolamento por usuário continua obrigatório — é o que torna a virada possível sem reescrita</td>
+</tr>
+<tr>
+<td>Orçamento de API por plano?</td>
+<td>Sem teto por enquanto</td>
+<td>Podemos rodar em esforço alto sem restrição. <strong>Continuamos medindo</strong> — o número vira crítico no dia da decisão de vender</td>
+</tr>
+<tr>
+<td>Integrar com Jira, Linear ou Azure DevOps?</td>
+<td><strong>Não.</strong> Construir a nossa, no mesmo patamar, menos burocrática e mais intuitiva</td>
+<td>Mudança grande: entra o épico E7 (execução do plano) e o não-escopo muda. <strong>+106h, roadmap vai de 7,4 para 9,2 semanas</strong></td>
+</tr>
+<tr>
+<td>Quantas pessoas no 1º trimestre?</td>
+<td>3, em teste</td>
+<td>Espaço compartilhado pode ser simples: convite direto, sem hierarquia de organização, papéis ou cotas</td>
+</tr>
+</tbody>
+</table>
+<p>A terceira resposta é a de maior impacto e merece ser lida com atenção: o Kickoff
+deixa de ser só um <strong>gerador de plano</strong> e passa a ser também o lugar onde o plano
+é <strong>executado</strong>. Isso quase dobra a superfície do produto. A aposta que a
+justifica está em <a href="#produto">produto.md</a>: planejar e executar no mesmo lugar
+elimina a tradução manual entre a ferramenta que planeja e a que executa — que é
+onde os planos costumam morrer.</p>
+<h2>Perguntas ainda em aberto</h2>
+<ul>
+<li>Quando a decisão de vender for tomada, o isolamento passa a ser por
+  organização, não por usuário. Vale antecipar o modelo de dados agora ou
+  aceitar a migração depois? (Recomendação: aceitar depois — antecipar
+  multi-organização sem cliente pagante é custo especulativo.)</li>
+<li>Qual das três pessoas do teste tem autoridade para decidir escopo?</li>
+</ul>
+<h2>Estado atual: v0 entregue</h2>
+<p>Funciona hoje, ponta a ponta:</p>
+<ul>
+<li>Formulário de descrição livre → plano gerado → visualização e edição.</li>
+<li>Épicos, tarefas, riscos, marcos, premissas e perguntas em aberto.</li>
+<li>Estimativa de três pontos com agregação PERT e faixa de 85% de confiança.</li>
+<li>Recálculo ao vivo quando se muda estimativa, capacidade ou estado de tarefa.</li>
+<li>Exportação em Markdown.</li>
+<li>Banco embutido (PGlite), sem nada para instalar.</li>
+</ul>
+<p><strong>Ainda não validado:</strong> o caminho de geração com Claude nunca rodou de verdade —
+falta a chave de API. Todos os planos gerados até agora vieram do motor
+heurístico local. Isso é o item número um do backlog, e é bloqueante.</p></section><section id="produto"><div class="head"><div class="n">Documento 02</div><h2>Produto</h2><p>O problema, quem usa, o que está dentro e fora do escopo</p></div>
+<h2>O problema</h2>
+<p>Planejar um projeto de software é caro e a maioria dos times faz mal. O padrão
+que se repete:</p>
+<ul>
+<li><strong>A quebra do trabalho é rasa.</strong> O plano tem "fazer o backend", não as trinta
+  coisas que "fazer o backend" significa. O que não foi escrito não foi estimado.</li>
+<li><strong>O que sempre é esquecido continua sendo esquecido.</strong> Migração de dados,
+  autorização, observabilidade, deploy, treinamento, documentação. Todo projeto
+  descobre isso na metade.</li>
+<li><strong>A estimativa é um número único.</strong> "Seis semanas" vira compromisso, sem
+  ninguém dizer se é 6 no melhor caso ou 6 na média.</li>
+<li><strong>Riscos são genéricos.</strong> "Prazo apertado" não é risco, é reclamação.</li>
+<li><strong>Premissas ficam na cabeça de quem planejou.</strong> Quando a premissa cai, o plano
+  cai junto e ninguém sabe por quê.</li>
+</ul>
+<p>Ferramentas de gestão (Jira, Trello, Linear) executam bem um plano que já
+existe. Nenhuma delas ajuda a <strong>produzir</strong> o plano.</p>
+<p>E há um segundo problema, que só aparece depois: mesmo quem planeja bem acaba
+<strong>traduzindo o plano à mão</strong> para a ferramenta onde o trabalho realmente
+acontece. Nessa tradução o plano perde as estimativas de três pontos, perde as
+premissas, perde os riscos — e vira uma lista de tarefas sem memória de por que
+foram criadas. Duas semanas depois, ninguém sabe mais qual era o plano.</p>
+<h2>Para quem</h2>
+<table>
+<thead>
+<tr>
+<th>Pessoa</th>
+<th>O que ela quer</th>
+<th>Como o Kickoff entrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dev tech lead</strong></td>
+<td>Não descobrir na semana 8 que faltou migração de dados</td>
+<td>Quebra do trabalho que inclui as frentes que se esquece por padrão</td>
+</tr>
+<tr>
+<td><strong>Gerente de projetos</strong></td>
+<td>Um prazo que possa defender e explicar</td>
+<td>Faixa de confiança com o cálculo à vista, não número mágico</td>
+</tr>
+<tr>
+<td><strong>Pessoa que patrocina o projeto</strong></td>
+<td>Saber o que está sendo assumido</td>
+<td>Premissas e perguntas em aberto explícitas no documento</td>
+</tr>
+</tbody>
+</table>
+<h2>Proposta de valor</h2>
+<blockquote>
+<p>Você descreve o projeto em texto livre. Em menos de dois minutos tem um plano
+de execução completo — e continua sendo dono dele, porque tudo é editável.</p>
+</blockquote>
+<p>Quatro coisas nos diferenciam:</p>
+<ol>
+<li><strong>A saída é estruturada e viva.</strong> Não é texto: são objetos que você edita, e
+   editar uma estimativa recalcula o prazo do projeto inteiro na hora.</li>
+<li><strong>A estimativa é honesta por construção.</strong> Três pontos por tarefa, agregação
+   PERT, faixa de 85%. A ferramenta torna difícil produzir um prazo otimista.</li>
+<li><strong>O que não se sabe fica visível.</strong> Premissas e perguntas em aberto são
+   seções de primeira classe, não um parágrafo no fim.</li>
+<li><strong>Planejar e executar no mesmo lugar.</strong> O plano não é exportado para outra
+   ferramenta: ele <em>vira</em> o quadro de execução, sem perder as estimativas, as
+   premissas e os riscos que o originaram.</li>
+</ol>
+<h3>A aposta por trás do item 4</h3>
+<p>Decidido em 05/08/2026: <strong>não vamos integrar com Jira, Linear ou Azure DevOps.</strong>
+Vamos construir a camada de execução, inspirada nelas, mas menos burocrática.</p>
+<p>O argumento a favor: a tradução manual do plano para a ferramenta de execução é
+onde o plano morre. Se o quadro de execução é o próprio plano, cada tarefa
+concluída atualiza o prazo automaticamente, e o replanejamento passa a ter dados
+reais em vez de suposição.</p>
+<p>O argumento contra, que precisa ser dito: <strong>Jira e Linear têm anos de trabalho
+acumulado.</strong> Não vamos empatar com eles em recursos, e não devemos tentar. A
+única forma de isso dar certo é sendo deliberadamente mais simples — ver a
+seção de não-escopo abaixo, que é o que impede a gente de virar um Jira pior.</p>
+<h2>Escopo da v1</h2>
+<p>Dentro:</p>
+<ul>
+<li>Geração de plano a partir de descrição livre, com Claude, com qualidade
+  comprovada por avaliação (hoje só temos a heurística testada).</li>
+<li>Contas de usuário e isolamento de dados entre pessoas.</li>
+<li>Espaço de trabalho compartilhado: mais de uma pessoa vê o mesmo projeto.</li>
+<li>Edição completa do plano gerado: tarefas, estimativas, estado, capacidade.</li>
+<li><strong>Execução do plano:</strong> quadro por estado com arrastar e soltar, responsável
+  por tarefa, comentários e a visão "o que é meu agora".</li>
+<li>Exportação em Markdown.</li>
+<li>Rodar em Postgres gerenciado, com migrações versionadas e monitoramento.</li>
+</ul>
+<h2>Não-escopo da v1</h2>
+<p>Escrito para ser citado quando alguém pedir. Cada item aqui é uma decisão, não
+um esquecimento. <strong>Agora que vamos ter execução própria, esta lista é o que nos
+impede de virar um Jira pior</strong> — trate cada item como uma linha que não se
+cruza sem discussão explícita:</p>
+<ul>
+<li><strong>Sprints, story points e cerimônia de método.</strong> O quadro é por estado da
+  tarefa, não por iteração. Sem planning poker, sem velocity, sem burndown.</li>
+<li><strong>Campos personalizados e fluxos configuráveis.</strong> É exatamente isso que torna
+  o Jira burocrático. Os estados são três — pendente, fazendo, feito — e não
+  são configuráveis.</li>
+<li><strong>Hierarquia organizacional.</strong> Sem times dentro de times, sem projeto dentro
+  de portfólio, sem permissão por campo.</li>
+<li><strong>Apontamento de horas.</strong> Estimamos esforço; não controlamos ponto.</li>
+<li><strong>Automações e regras.</strong> "Quando mover para X, faça Y" é a porta de entrada
+  da complexidade infinita.</li>
+<li><strong>Sincronização com ferramenta de gestão externa.</strong> Decidido: construímos a
+  nossa. Exportar em Markdown continua; sincronizar dos dois lados, não.</li>
+<li><strong>Cobrança e planos pagos.</strong> Entra quando a decisão de vender for tomada.</li>
+<li><strong>App mobile nativo.</strong> A tela funciona em celular; app nativo não.</li>
+<li><strong>Dependências entre tarefas e caminho crítico.</strong> Reconhecemos que falta —
+  está no roadmap, depois da execução. Ver <a href="#roadmap">roadmap.md</a>.</li>
+<li><strong>Colaboração em tempo real</strong> no estilo edição simultânea.</li>
+</ul>
+<h2>Como saberemos que deu certo</h2>
+<p>Métricas para medir a partir do marco M2. Nenhuma delas é "número de planos
+gerados" — gerar é fácil, o que importa é o plano ser usado.</p>
+<table>
+<thead>
+<tr>
+<th>Métrica</th>
+<th>Alvo</th>
+<th>Por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Planos gerados que continuam sendo editados 7 dias depois</td>
+<td>&gt; 50%</td>
+<td>Plano que ninguém volta a abrir foi entretenimento</td>
+</tr>
+<tr>
+<td>Tarefas editadas ou adicionadas por plano</td>
+<td>mediana ≥ 5</td>
+<td>Mede se a pessoa se apropriou do plano</td>
+</tr>
+<tr>
+<td>Tempo da descrição ao plano aprovado</td>
+<td>&lt; 30 min</td>
+<td>Compara com o dia de reunião que isso custa hoje</td>
+</tr>
+<tr>
+<td>Custo de API por plano gerado</td>
+<td>&lt; US$ 1,00</td>
+<td>Define se o modelo é sustentável</td>
+</tr>
+<tr>
+<td>Erro de estimativa em projeto concluído</td>
+<td>dentro da faixa de 85% em ≥ 4 de 5 projetos</td>
+<td>A prova real. Só medível daqui a meses</td>
+</tr>
+</tbody>
+</table>
+<p>A última é a que importa de verdade e é a mais lenta de obter. Comece a
+registrar o esforço real desde o primeiro projeto planejado com a ferramenta,
+mesmo que a análise só venha muito depois.</p></section><section id="roadmap"><div class="head"><div class="n">Documento 03</div><h2>Roadmap</h2><p>Marcos, critérios de saída e datas projetadas</p></div>
+<p>Base de cálculo: <strong>2 pessoas × 30h/semana = 60h por semana</strong>. Início em
+06/08/2026. Os números vêm do <a href="#backlog">backlog.md</a>; se o backlog mudar,
+recalcule aqui.</p>
+<h2>Marcos</h2>
+<table>
+<thead>
+<tr>
+<th>Marco</th>
+<th>Entrega</th>
+<th style="text-align: right;">Esforço</th>
+<th style="text-align: right;">Acumulado</th>
+<th>Data projetada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M0</strong></td>
+<td>v0 funcionando ponta a ponta</td>
+<td style="text-align: right;">—</td>
+<td style="text-align: right;">—</td>
+<td>✅ 05/08/2026</td>
+</tr>
+<tr>
+<td><strong>M1</strong></td>
+<td>Qualidade do plano com Claude comprovada</td>
+<td style="text-align: right;">37h</td>
+<td style="text-align: right;">37h</td>
+<td>11/08/2026</td>
+</tr>
+<tr>
+<td><strong>M2</strong></td>
+<td>Multiusuário em produção</td>
+<td style="text-align: right;">144h</td>
+<td style="text-align: right;">181h</td>
+<td>27/08/2026</td>
+</tr>
+<tr>
+<td><strong>M3</strong></td>
+<td>Execução do plano</td>
+<td style="text-align: right;">106h</td>
+<td style="text-align: right;">287h</td>
+<td>09/09/2026</td>
+</tr>
+<tr>
+<td><strong>M4</strong></td>
+<td>Ciclo de replanejamento e refinamento</td>
+<td style="text-align: right;">161h</td>
+<td style="text-align: right;">449h</td>
+<td>27/09/2026</td>
+</tr>
+<tr>
+<td><strong>M5</strong></td>
+<td>Dependências e caminho crítico</td>
+<td style="text-align: right;">80h</td>
+<td style="text-align: right;">529h</td>
+<td>07/10/2026</td>
+</tr>
+</tbody>
+</table>
+<p>Com a faixa de 85% de confiança, M5 cai em <strong>09/10/2026</strong>. É esse o número a
+levar para fora do time — não o de 07/10.</p>
+<blockquote>
+<p><strong>Mudança de 05/08/2026.</strong> A decisão de construir a execução em vez de
+integrar com Jira ou Linear acrescentou o marco M3 e empurrou os antigos M3 e
+M4 para M4 e M5. O plano foi de 7,4 para 9,2 semanas no percentil 85. Adição
+consciente de escopo, registrada para manter a comparação honesta.</p>
+</blockquote>
+<h3>M1 — Qualidade do plano comprovada</h3>
+<p><strong>Critério de saída:</strong> cinco projetos reais de domínios diferentes planejados
+com o Claude, avaliados por uma rubrica escrita, com nota média acima do mínimo
+que definirmos. Falhas do modelo (recusa, truncamento, tempo esgotado) tratadas
+na interface com mensagem útil.</p>
+<p>Este marco é <strong>bloqueante</strong>. Enquanto ele não fechar, todo o resto está sendo
+construído em cima de uma premissa não verificada: a de que o Claude produz
+planos bons o bastante para alguém usar. Se a qualidade não passar, o
+investimento certo é prompt e avaliação, não login e Gantt.</p>
+<h3>M2 — Multiusuário em produção</h3>
+<p><strong>Critério de saída:</strong> duas pessoas distintas usam a ferramenta em produção, com
+dados isolados, rodando em Postgres gerenciado, com migrações versionadas e
+alerta de erro configurado. Nenhuma consulta retorna dado de outro usuário — e
+isso está coberto por teste automatizado.</p>
+<p>Este é o marco que transforma um projeto local em ferramenta de time.</p>
+<h3>M3 — Execução do plano</h3>
+<p><strong>Critério de saída:</strong> as 3 pessoas do teste conseguem trabalhar dentro do
+Kickoff por uma semana inteira sem abrir outra ferramenta. Quadro por estado
+com arrastar e soltar, responsável por tarefa, comentários, filtros e a visão
+"o que é meu agora". Tarefa concluída no quadro atualiza o prazo do projeto
+sozinha.</p>
+<p>O teste real deste marco não é a lista de recursos: é <strong>uma semana de uso sem
+recair no WhatsApp e na planilha</strong>. Se isso não acontecer, o problema é de
+fluxo, não de recurso faltando — e adicionar recurso vai piorar.</p>
+<h3>M4 — Ciclo de replanejamento e refinamento</h3>
+<p><strong>Critério de saída:</strong> dá para pedir ao Claude que revise o plano a partir do
+estado atual (tarefas concluídas, estimativas corrigidas, escopo mudado), ver o
+que mudou entre as versões e voltar atrás. Edição estrutural completa: adicionar,
+remover e reordenar épicos e tarefas.</p>
+<p>É aqui que a ferramenta deixa de ser "gerador de plano" e vira "companheira de
+projeto". Um plano só é útil enquanto acompanha a realidade.</p>
+<h3>M5 — Dependências e caminho crítico</h3>
+<p><strong>Critério de saída:</strong> dependências declaráveis entre tarefas, caminho crítico
+calculado e um Gantt simples. O prazo passa a considerar sequenciamento, não
+apenas soma de esforço dividida por capacidade.</p>
+<p>Deliberadamente por último. Somar esforço já entrega a maior parte do valor;
+caminho crítico é refinamento que só compensa depois que as três primeiras
+frentes estiverem de pé.</p>
+<h2>O que ficou fora deste roadmap</h2>
+<ul>
+<li>Integração ou sincronização com Jira, Linear ou Azure DevOps. <strong>Decidido em
+  05/08/2026:</strong> construímos a nossa camada de execução (M3).</li>
+<li>Cobrança e planos pagos — entram quando a decisão de vender for tomada.</li>
+<li>App nativo.</li>
+<li>Colaboração em tempo real.</li>
+<li>Sprints, campos personalizados, automações e apontamento de horas. Ver o
+  não-escopo em <a href="#produto">produto.md</a>: é o que nos impede de virar um Jira
+  pior.</li>
+</ul>
+<h2>Como este roadmap deve envelhecer</h2>
+<p>Revisar a cada marco fechado, com três perguntas:</p>
+<ol>
+<li>As premissas do <a href="#indice">README</a> continuam verdadeiras?</li>
+<li>O esforço real do marco que acabou bateu com a estimativa? Se errou por mais
+   de 30%, ajuste os marcos seguintes na mesma proporção antes de prometer data.</li>
+<li>Alguma pergunta em aberto foi respondida de um jeito que muda a ordem?</li>
+</ol>
+<p>Datas projetadas não são compromisso enquanto o marco anterior não fechou.</p></section><section id="backlog"><div class="head"><div class="n">Documento 04</div><h2>Backlog</h2><p>Épicos e tarefas com estimativa de três pontos</p></div>
+<p>Estimativas em <strong>horas de trabalho efetivo de uma pessoa</strong>, em três pontos:
+O = otimista, M = mais provável, P = pessimista. A coluna PERT é
+<code>(O + 4M + P) / 6</code>.</p>
+<p>Regra que usamos ao estimar: se a pessimista não for pelo menos o dobro da
+provável em tarefa com incerteza real, a pessimista está otimista.</p>
+<hr />
+<h2>E1 — Validar o caminho do Claude 🔴 bloqueante</h2>
+<p>Sem isto, tudo o mais é construído sobre premissa não verificada.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1</td>
+<td>Configurar chave e gerar 5 planos reais de domínios diferentes</td>
+<td>produto</td>
+<td>alta</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4,3</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>Escrever a rubrica de avaliação de plano e aplicá-la aos 5</td>
+<td>produto</td>
+<td>alta</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">13,0</td>
+</tr>
+<tr>
+<td>1.3</td>
+<td>Ajustar o prompt do sistema com base nas falhas observadas</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">11,3</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>Tratar falhas do modelo na interface (recusa, truncamento, timeout)</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">8,7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 37h</strong></p>
+<blockquote>
+<p>A rubrica (1.2) é o entregável mais valioso desta frente. Sem ela, "o plano
+ficou bom" é opinião, e não dá para saber se uma mudança de prompt melhorou ou
+piorou. Critérios sugeridos: cobre as frentes esquecidas por padrão? as tarefas
+cabem em menos de uma semana? as pessimistas são realmente pessimistas? os
+riscos são específicos do domínio ou genéricos?</p>
+</blockquote>
+<hr />
+<h2>E2 — Contas e multiusuário</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1</td>
+<td>Escolher e integrar provedor de autenticação</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">13,0</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>Adicionar <code>owner_id</code> ao schema e migrar os dados existentes</td>
+<td>dados</td>
+<td>alta</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">8,7</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Filtrar todas as consultas por usuário, com teste que prova o isolamento</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">9,3</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>Telas de login, sessão e saída</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">12,3</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>Espaço de trabalho compartilhado: convidar pessoas para um projeto</td>
+<td>backend</td>
+<td>media</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">26,0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 69h</strong></p>
+<blockquote>
+<p>2.3 é a tarefa que mais assusta e a mais fácil de subestimar. Vazamento de dado
+entre usuários é falha silenciosa: nada quebra, só aparece o dado errado. O
+teste automatizado não é opcional aqui.</p>
+</blockquote>
+<hr />
+<h2>E3 — Replanejamento</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1</td>
+<td>Ação "revisar plano" que envia o estado atual ao Claude</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">26,0</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Comparação visual entre a versão anterior e a revisada</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Histórico de versões do plano, com volta atrás</td>
+<td>dados</td>
+<td>media</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">17,3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 68h</strong></p>
+<blockquote>
+<p>3.1 tem a maior incerteza do backlog. O problema difícil não é chamar a API de
+novo: é decidir o que preservar. Se a pessoa corrigiu 20 estimativas à mão e a
+revisão as descarta, ela nunca mais usa o botão.</p>
+</blockquote>
+<hr />
+<h2>E4 — Dependências e caminho crítico</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.1</td>
+<td>Modelar dependências entre tarefas no schema</td>
+<td>dados</td>
+<td>media</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">13,0</td>
+</tr>
+<tr>
+<td>4.2</td>
+<td>Interface para declarar e visualizar dependências</td>
+<td>frontend</td>
+<td>media</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">16,7</td>
+</tr>
+<tr>
+<td>4.3</td>
+<td>Cálculo de caminho crítico e folga por tarefa</td>
+<td>backend</td>
+<td>media</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">26,0</td>
+</tr>
+<tr>
+<td>4.4</td>
+<td>Gráfico de Gantt simples</td>
+<td>frontend</td>
+<td>baixa</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 80h</strong></p>
+<blockquote>
+<p>4.1 precisa impedir ciclo de dependência na escrita, não só na leitura. Detectar
+ciclo depois que ele existe no banco é problema muito pior.</p>
+</blockquote>
+<hr />
+<h2>E5 — Confiabilidade e operação</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5.1</td>
+<td>Geração assíncrona com estado de progresso na tela</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+<tr>
+<td>5.2</td>
+<td>Testes automatizados do caminho crítico</td>
+<td>qa</td>
+<td>alta</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+<tr>
+<td>5.3</td>
+<td>Migrações versionadas e implantação em Postgres gerenciado</td>
+<td>devops</td>
+<td>alta</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">13,0</td>
+</tr>
+<tr>
+<td>5.4</td>
+<td>Observabilidade e custo de API por plano gerado</td>
+<td>devops</td>
+<td>media</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">12,3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 75h</strong></p>
+<blockquote>
+<p>5.1 deixa de ser conforto e vira necessidade em produção: hoje a geração
+acontece dentro da requisição, e plataformas de hospedagem cortam requisição
+longa. Com o Claude em esforço alto, dois minutos é normal.</p>
+</blockquote>
+<hr />
+<h2>E6 — Refinamento do produto</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6.1</td>
+<td>Edição estrutural: adicionar, remover e reordenar épicos e tarefas</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+<tr>
+<td>6.2</td>
+<td>Exportação para CSV e para uma ferramenta de gestão (a definir)</td>
+<td>backend</td>
+<td>media</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">34,7</td>
+</tr>
+<tr>
+<td>6.3</td>
+<td>Modo apresentação para a reunião de abertura do projeto</td>
+<td>frontend</td>
+<td>baixa</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">16,7</td>
+</tr>
+<tr>
+<td>6.4</td>
+<td>Acessibilidade e ajuste fino em telas pequenas</td>
+<td>frontend</td>
+<td>media</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">16,7</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 93h</strong></p>
+<blockquote>
+<p>6.2 está com pessimista de 64h de propósito: enquanto não decidirmos o destino
+(Jira? Linear? Azure DevOps?), a incerteza é real. Assim que houver decisão,
+reestime — provavelmente para baixo.</p>
+</blockquote>
+<hr />
+<h2>E7 — Execução do plano</h2>
+<p>Entrou em 05/08/2026, com a decisão de não integrar com Jira ou Linear e
+construir a camada de execução aqui dentro. É o épico que transforma o plano em
+lugar de trabalho.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Tarefa</th>
+<th>Papel</th>
+<th>Prio</th>
+<th style="text-align: right;">O</th>
+<th style="text-align: right;">M</th>
+<th style="text-align: right;">P</th>
+<th style="text-align: right;">PERT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7.1</td>
+<td>Quadro por estado com arrastar e soltar</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">34,7</td>
+</tr>
+<tr>
+<td>7.2</td>
+<td>Responsável por tarefa</td>
+<td>backend</td>
+<td>alta</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">13,0</td>
+</tr>
+<tr>
+<td>7.3</td>
+<td>Comentários por tarefa</td>
+<td>backend</td>
+<td>media</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">24,7</td>
+</tr>
+<tr>
+<td>7.4</td>
+<td>Filtros e visão "minhas tarefas"</td>
+<td>frontend</td>
+<td>alta</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">16,7</td>
+</tr>
+<tr>
+<td>7.5</td>
+<td>Aviso de mudança relevante, dentro do app</td>
+<td>backend</td>
+<td>media</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">17,3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total do épico: 106h</strong></p>
+<blockquote>
+<p>7.1 é a tarefa de maior incerteza do backlog inteiro, com pessimista de 64h.
+Arrastar e soltar acessível — que funcione com teclado e leitor de tela — é
+muito mais trabalho do que a versão que só funciona com mouse. Decida qual das
+duas você quer <strong>antes</strong> de começar, não no meio.</p>
+<p>O histórico de alterações não está aqui de propósito: ele já existe como
+tarefa 3.3, no épico de replanejamento. Não duplicar.</p>
+</blockquote>
+<hr />
+<h2>Totais</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Esforço esperado (soma PERT)</td>
+<td style="text-align: right;"><strong>529h</strong></td>
+</tr>
+<tr>
+<td>Desvio-padrão agregado</td>
+<td style="text-align: right;"><strong>23h</strong></td>
+</tr>
+<tr>
+<td>Esforço com 85% de confiança</td>
+<td style="text-align: right;"><strong>553h</strong></td>
+</tr>
+<tr>
+<td>Duração esperada (60h/semana)</td>
+<td style="text-align: right;"><strong>8,8 semanas</strong></td>
+</tr>
+<tr>
+<td>Duração com 85% de confiança</td>
+<td style="text-align: right;"><strong>9,2 semanas</strong></td>
+</tr>
+</tbody>
+</table>
+<p>O épico E7 acrescentou <strong>106h</strong> ao plano — de 422h para 529h, e de 7,4 para 9,2
+semanas no percentil 85. Foi uma adição consciente de escopo, não um estouro:
+está registrada aqui para que a comparação com a estimativa original continue
+possível.</p>
+<h3>Uma ressalva honesta sobre esses números</h3>
+<p>A agregação PERT assume que as tarefas são <strong>independentes</strong> entre si. Não são.
+Se a integração com o provedor de autenticação for pior que o esperado, é
+provável que o teste de isolamento também seja — a mesma causa afeta as duas. Na
+prática isso significa que o desvio-padrão de 20h está <strong>subestimado</strong>, e a faixa
+de 85% é um piso, não um teto.</p>
+<p>Como usar isso sem se enganar:</p>
+<ul>
+<li>Trate 7,4 semanas como o cenário bom, não como o pior caso.</li>
+<li>O único corretivo que funciona é medir: registre o esforço real de cada tarefa
+  concluída e compare com a estimativa. Depois de uns 20 pontos de dados, o
+  histórico do time vale mais que qualquer fórmula.</li>
+</ul></section><section id="riscos"><div class="head"><div class="n">Documento 05</div><h2>Riscos</h2><p>O que pode dar errado e o que fazemos a respeito</p></div>
+<p>Ordenados por impacto × probabilidade, ambos de 1 a 5. Revisar a cada marco
+fechado: risco que não se revisita vira decoração.</p>
+<hr />
+<h3>🔴 20 — A qualidade do plano gerado não é boa o suficiente para alguém usar</h3>
+<p><strong>Impacto 5 · Probabilidade 4</strong></p>
+<p>É o risco existencial do projeto. Nunca rodamos o caminho do Claude de verdade —
+todos os planos até hoje vieram da heurística local. Se a saída do modelo for
+genérica ("implementar backend", "fazer testes"), a ferramenta não tem razão de
+existir, e nenhuma quantidade de interface bonita salva.</p>
+<p><strong>Mitigação:</strong> E1 é o primeiro épico e é bloqueante. A rubrica de avaliação (1.2)
+vem antes de qualquer investimento em login ou Gantt. Se a nota não passar do
+mínimo, o roadmap para e vira trabalho de prompt e avaliação.</p>
+<p><strong>Sinal de alerta:</strong> planos gerados que a pessoa apaga ou reescreve inteiro.</p>
+<hr />
+<h3>🔴 16 — Vazamento de dado entre usuários quando o multiusuário entrar</h3>
+<p><strong>Impacto 5 · Probabilidade 3 (com o teste em 2.3: cai para 1)</strong></p>
+<p>Toda consulta hoje é global. Adicionar <code>owner_id</code> não protege nada sozinho —
+proteção é filtrar em <strong>todas</strong> as consultas, e é fácil esquecer uma. A falha é
+silenciosa: nada quebra, só aparece o projeto de outra pessoa.</p>
+<p><strong>Mitigação:</strong> a tarefa 2.3 inclui teste automatizado que cria dois usuários,
+cria dado com cada um e prova que nenhuma consulta atravessa a fronteira. Esse
+teste roda na integração contínua e é bloqueante para publicar.</p>
+<p><strong>Sinal de alerta:</strong> qualquer consulta nova em <code>src/db/queries.ts</code> sem cláusula
+de usuário.</p>
+<hr />
+<h3>🟠 16 — Virarmos um Jira pior em vez de uma ferramenta mais simples</h3>
+<p><strong>Impacto 4 · Probabilidade 4</strong></p>
+<p>Risco novo, criado pela decisão de 05/08/2026 de construir a execução em vez de
+integrar. O caminho para o fracasso é conhecido e confortável: cada recurso que
+falta parece razoável isoladamente. Falta sprint. Falta campo personalizado.
+Falta automação. Dois meses depois temos um Jira com um décimo dos recursos e
+nenhuma vantagem — porque a vantagem prometida era <strong>ser mais simples</strong>.</p>
+<p><strong>Mitigação:</strong> o não-escopo em <a href="#produto">produto.md</a> lista explicitamente o
+que não construímos, e cada item ali é uma linha que só se cruza com discussão
+aberta. O critério de saída do M3 não é lista de recursos: é as 3 pessoas
+trabalharem uma semana inteira sem abrir outra ferramenta.</p>
+<p><strong>Sinal de alerta:</strong> o primeiro pedido de "só um campinho a mais" aceito sem
+discussão.</p>
+<hr />
+<h3>🟡 10 — Custo de API por plano inviabiliza o produto pago</h3>
+<p><strong>Impacto 5 · Probabilidade 2</strong></p>
+<p>Rodamos Claude Opus 5 com esforço alto e <code>max_tokens</code> de 32000, e nunca medimos
+o custo real de uma geração. Foi decidido em 05/08/2026 que <strong>não há teto de
+orçamento por enquanto</strong> — o que reduz a probabilidade agora, com 3 pessoas em
+teste, mas não elimina o problema: se a decisão de vender vier e o custo por
+plano for alto demais, o preço não fecha.</p>
+<p><strong>Mitigação:</strong> a tarefa 5.4 mede custo por plano gerado mesmo sem teto definido.
+Medir é barato agora; descobrir na negociação de preço é caro. Alavancas se o
+número assustar: baixar o esforço para <code>medium</code> e comparar qualidade pela
+rubrica; cache de prompt no prompt de sistema, que é fixo; limite de gerações.</p>
+<p><strong>Sinal de alerta:</strong> a conversa sobre virar produto começar sem esse número na
+mão.</p>
+<hr />
+<h3>🟠 12 — Geração dentro da requisição estoura o tempo limite em produção</h3>
+<p><strong>Impacto 4 · Probabilidade 3</strong></p>
+<p>Hoje a geração acontece na própria ação do servidor. Localmente não incomoda;
+em plataforma de hospedagem, requisição longa é cortada. Com esforço alto, dois
+minutos é comum.</p>
+<p><strong>Mitigação:</strong> tarefa 5.1 move a geração para trabalho assíncrono com estado de
+progresso, antes do marco M2, que é quando isso vai para produção.</p>
+<p><strong>Sinal de alerta:</strong> primeira publicação em ambiente hospedado.</p>
+<hr />
+<h3>🟠 12 — O botão de replanejar descarta o trabalho manual da pessoa</h3>
+<p><strong>Impacto 4 · Probabilidade 3</strong></p>
+<p>Se a pessoa corrigiu vinte estimativas à mão e a revisão do plano as substitui,
+ela usa o botão uma vez e nunca mais. O recurso mais caro do E3 vira recurso
+morto.</p>
+<p><strong>Mitigação:</strong> decidir a política de preservação <strong>antes</strong> de codar a 3.1, e
+escrevê-la no <a href="#decisoes">decisoes-tecnicas.md</a>. Ponto de partida
+sugerido: tarefa tocada pela pessoa é imutável; o modelo só pode adicionar,
+remover o que não foi tocado e sugerir — nunca sobrescrever edição humana. A
+comparação visual (3.2) existe para tornar isso auditável.</p>
+<hr />
+<h3>🟡 9 — Time sem a disponibilidade real que o plano assume</h3>
+<p><strong>Impacto 3 · Probabilidade 3</strong></p>
+<p>Todo o roadmap assume 2 pessoas × 30h efetivas. Trinta horas efetivas é uma
+semana inteira sem reunião longa, sem suporte e sem troca de contexto. É uma
+premissa agressiva.</p>
+<p><strong>Mitigação:</strong> confirmar a disponibilidade real antes de comunicar qualquer data
+para fora. Se for 20h por pessoa, o M4 vai de 24/09 para meados de outubro — e é
+melhor descobrir isso agora do que em setembro.</p>
+<hr />
+<h3>🟡 9 — Escopo crescendo por pedidos fora do combinado</h3>
+<p><strong>Impacto 3 · Probabilidade 3</strong></p>
+<p>"Já que estamos nisso, dá para colocar um kanban?" O não-escopo da v1 existe
+justamente porque cada um desses pedidos é razoável isoladamente.</p>
+<p><strong>Mitigação:</strong> a seção de não-escopo em <a href="#produto">produto.md</a> é para ser
+citada. Todo pedido novo é tratado como <strong>troca</strong>, não como adição: entra
+quando algo de peso equivalente sai, e a data se move de forma explícita.</p>
+<hr />
+<h3>🟡 8 — Dependência de um único fornecedor de modelo</h3>
+<p><strong>Impacto 4 · Probabilidade 2</strong></p>
+<p>Todo o valor do produto passa pela API da Anthropic. Indisponibilidade, mudança
+de preço ou de política afeta a ferramenta inteira.</p>
+<p><strong>Mitigação:</strong> o motor heurístico local já é uma degradação graciosa — o produto
+não para, só perde qualidade. A camada de geração já é isolada em
+<code>src/lib/planner.ts</code> com saída validada por schema, o que torna a troca de modelo
+um trabalho contido. Não vale investir mais que isso agora.</p></section><section id="decisoes"><div class="head"><div class="n">Documento 06</div><h2>Decisões técnicas</h2><p>Arquitetura já definida, com motivo e gatilho de revisão</p></div>
+<p>Registro das decisões de arquitetura já tomadas, com o motivo e o que
+justificaria voltar atrás. Decisão sem motivo escrito vira dogma; decisão sem
+gatilho de revisão vira dívida.</p>
+<hr />
+<h2>DT-01 — Next.js com App Router e Server Actions</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p>Renderização no servidor com mutações via Server Actions, sem camada de API
+própria.</p>
+<p><strong>Por quê:</strong> o produto é essencialmente CRUD sobre um plano, com uma chamada
+pesada de IA no servidor. Server Actions eliminam a escrita de endpoints e a
+duplicação de validação entre cliente e servidor. O mesmo schema Zod valida o
+formulário e o corpo da ação.</p>
+<p><strong>Custo aceito:</strong> acoplamento ao Next. Se um dia houver app mobile nativo, será
+preciso expor uma API de verdade.</p>
+<p><strong>Revisar se:</strong> aparecer um segundo consumidor dos dados que não seja o navegador.</p>
+<hr />
+<h2>DT-02 — Drizzle ORM com PGlite em desenvolvimento e Postgres em produção</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p><code>DATABASE_URL</code> ausente → PGlite (Postgres compilado em WASM, arquivo local em
+<code>.pglite/</code>). Presente → Postgres via <code>postgres-js</code>. O mesmo schema Drizzle serve
+aos dois, porque o dialeto é o mesmo.</p>
+<p><strong>Por quê:</strong> <code>npm install &amp;&amp; npm run dev</code> e o projeto sobe. Sem Docker, sem
+serviço para instalar, sem SQLite fingindo ser Postgres com diferenças sutis de
+tipo que aparecem só em produção.</p>
+<p><strong>Custo aceito:</strong> PGlite é de processo único; não serve para produção.</p>
+<p><strong>Revisar se:</strong> precisarmos de extensão Postgres que o PGlite não tenha
+(pesquisa vetorial, por exemplo).</p>
+<hr />
+<h2>DT-03 — Tabelas criadas por bootstrap em vez de migrações versionadas</h2>
+<p><strong>Status:</strong> aceita, com prazo de validade · 05/08/2026</p>
+<p><code>src/db/index.ts</code> roda <code>CREATE TABLE IF NOT EXISTS</code> na primeira conexão.</p>
+<p><strong>Por quê:</strong> para a v0, o passo de migração é atrito sem benefício — só existe um
+ambiente e ele é descartável.</p>
+<p><strong>Custo aceito:</strong> não há caminho de evolução do schema. Adicionar coluna a uma
+tabela existente não acontece.</p>
+<p><strong>Revisar quando:</strong> tarefa 5.3, obrigatoriamente antes do M2. <code>drizzle.config.ts</code>
+já está pronto para <code>drizzle-kit generate</code>/<code>push</code>. <strong>Esta decisão expira no
+primeiro dado real que não puder ser perdido.</strong></p>
+<hr />
+<h2>DT-04 — Saída estruturada com schema Zod em vez de texto interpretado</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p>O plano vem do Claude por <code>output_config.format</code> com o schema de
+<code>src/lib/plan-schema.ts</code>, e é validado por Zod antes de tocar o banco.</p>
+<p><strong>Por quê:</strong> interpretar Markdown gerado por modelo é frágil e falha de formas
+difíceis de detectar. Com schema, ou o plano chega no formato certo, ou não
+chega — e o erro é explícito. O mesmo schema documenta o contrato para quem lê o
+código e descreve os campos para o modelo, via <code>.describe()</code>.</p>
+<p><strong>Custo aceito:</strong> o schema é rígido. Adicionar um campo exige mudar schema,
+banco e interface juntos.</p>
+<hr />
+<h2>DT-05 — Motor heurístico local como degradação graciosa</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p>Sem <code>ANTHROPIC_API_KEY</code>, ou quando a chamada falha,
+<code>src/lib/heuristic-planner.ts</code> monta um plano a partir de blocos ativados por
+palavras da descrição.</p>
+<p><strong>Por quê:</strong> três motivos. O produto continua funcionando quando a API está fora;
+dá para desenvolver e testar toda a interface sem gastar com API; e um novo
+integrante clona o repositório e vê o produto funcionando sem pedir credencial a
+ninguém.</p>
+<p><strong>Custo aceito, e é um custo real:</strong> cria a ilusão de que o sistema funciona
+quando o caminho principal nunca foi exercitado. Foi exatamente o que aconteceu
+na v0. Por isso a origem do plano é gravada na coluna <code>source</code> e mostrada na
+interface — <strong>um plano com <code>source = 'heuristico'</code> não é prova de que o Claude
+funciona.</strong></p>
+<hr />
+<h2>DT-06 — Estimativa de três pontos com agregação PERT</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p>Cada tarefa carrega otimista, provável e pessimista. Esperado por tarefa é
+<code>(O + 4M + P) / 6</code>; o agregado soma esperados, soma <strong>variâncias</strong> (não desvios)
+e apresenta a faixa de 85% como esperado + 1,04σ.</p>
+<p><strong>Por quê:</strong> é o único jeito honesto de comunicar prazo. Um número único vira
+compromisso sem ninguém dizer qual era a confiança por trás dele.</p>
+<p><strong>Limitação conhecida e assumida:</strong> PERT assume independência entre tarefas.
+Tarefas de projeto real são correlacionadas, então o desvio-padrão agregado é
+subestimado e a faixa de 85% é um piso. Está escrito em <a href="#backlog">backlog.md</a>
+e deve ser dito em voz alta quando o número for apresentado.</p>
+<p><strong>Revisar se:</strong> tivermos histórico suficiente de esforço real para calibrar com
+dados do time em vez de fórmula.</p>
+<hr />
+<h2>DT-07 — Interface só em tema escuro</h2>
+<p><strong>Status:</strong> aceita · 05/08/2026</p>
+<p><strong>Por quê:</strong> compromisso deliberado de design. Um tema bem feito é melhor que
+dois medianos, e é metade do trabalho de estilo e de teste.</p>
+<p><strong>Revisar se:</strong> houver pedido real de pessoa usuária, ou se surgir requisito de
+acessibilidade que o tema escuro não atenda.</p>
+<hr />
+<h2>DT-08 — Política de preservação no replanejamento</h2>
+<p><strong>Status:</strong> 🟡 <strong>pendente — decidir antes de codar a tarefa 3.1</strong></p>
+<p>Quando o Claude revisa um plano existente, o que ele pode sobrescrever?</p>
+<p><strong>Proposta a validar:</strong> toda tarefa tocada por uma pessoa (estimativa editada,
+estado alterado, título mudado) é imutável para o modelo. Ele pode adicionar
+tarefas novas, remover tarefas que ninguém tocou e sugerir mudanças em tarefas
+tocadas — nunca aplicá-las sozinho. A comparação visual da tarefa 3.2 existe
+para tornar isso auditável antes de confirmar.</p>
+<p>Fechar esta decisão é pré-requisito do épico E3. Ver o risco de mesmo tema em
+<a href="#riscos">riscos.md</a>.</p></section><section id="processo"><div class="head"><div class="n">Documento 07</div><h2>Processo</h2><p>Cadência, definição de pronto, testes e escopo</p></div>
+<p>Time de 2 pessoas. O processo é proporcional a isso: o suficiente para não
+perder trabalho e não repetir discussão, nada além.</p>
+<h2>Cadência</h2>
+<table>
+<thead>
+<tr>
+<th>Ritual</th>
+<th>Quando</th>
+<th>Duração</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Alinhamento diário</td>
+<td>Toda manhã</td>
+<td>10 min</td>
+<td>O que travou. Não é relatório de status — isso está no quadro</td>
+</tr>
+<tr>
+<td>Revisão de marco</td>
+<td>Ao fechar cada M</td>
+<td>45 min</td>
+<td>Esforço real × estimado, riscos, ajuste do roadmap</td>
+</tr>
+<tr>
+<td>Repriorização</td>
+<td>Início de cada marco</td>
+<td>30 min</td>
+<td>Confirmar que a ordem do backlog ainda faz sentido</td>
+</tr>
+</tbody>
+</table>
+<p>Sem sprint de duas semanas. Com dois marcos deste tamanho, cerimônia de sprint
+custa mais do que entrega.</p>
+<h2>Fluxo de trabalho</h2>
+<ol>
+<li>Pegue a tarefa mais alta do épico em andamento. <strong>Não pule épico</strong> — a ordem
+   em <a href="#backlog">backlog.md</a> reflete dependência real, não preferência.</li>
+<li>Branch a partir de <code>main</code>: <code>tipo/descricao-curta</code>
+   (<code>feat/auth-provider</code>, <code>fix/pglite-bootstrap</code>, <code>docs/rubrica-avaliacao</code>).</li>
+<li>Commits pequenos, no imperativo, em português:
+   <code>adiciona owner_id ao schema de projetos</code>.</li>
+<li>Abra o PR quando estiver pronto para revisão, não antes. PR aberto é convite
+   a revisar.</li>
+<li><strong>Revisão obrigatória</strong>, mesmo com duas pessoas. Especialmente com duas
+   pessoas — é a única barreira que sobra.</li>
+<li><code>main</code> sempre publicável.</li>
+</ol>
+<h2>Definição de pronto</h2>
+<p>Uma tarefa só é marcada como concluída quando <strong>todos</strong> os itens valem:</p>
+<ul>
+<li>&#9744; Faz o que a descrição da tarefa diz, incluindo o critério de aceite.</li>
+<li>&#9744; <code>npm run build</code> passa.</li>
+<li>&#9744; <code>npx tsc --noEmit</code> passa sem erro.</li>
+<li>&#9744; <code>npm run lint</code> passa sem aviso novo.</li>
+<li>&#9744; Testado no navegador, no fluxo real — não só "compila".</li>
+<li>&#9744; Se mexeu em consulta ao banco depois do M2: tem teste provando o
+      isolamento por usuário.</li>
+<li>&#9744; Se mudou decisão de arquitetura: registrada em
+      <a href="#decisoes">decisoes-tecnicas.md</a>.</li>
+<li>&#9744; Se a estimativa errou por mais de 50%: o esforço real está anotado na
+      tarefa. <strong>Este item é o que vai calibrar as estimativas futuras — não
+      pule.</strong></li>
+</ul>
+<h2>Testes</h2>
+<p>Não perseguimos cobertura. Perseguimos as coisas que, quebrando, param o
+produto:</p>
+<table>
+<thead>
+<tr>
+<th>O que</th>
+<th>Como</th>
+<th>A partir de</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cálculo PERT e agregação</td>
+<td>Teste unitário de <code>src/lib/estimate.ts</code></td>
+<td>agora</td>
+</tr>
+<tr>
+<td>Validação da saída do modelo</td>
+<td>Teste de <code>PlanSchema</code> com respostas reais e malformadas</td>
+<td>E1</td>
+</tr>
+<tr>
+<td>Isolamento entre usuários</td>
+<td>Teste de integração com dois usuários</td>
+<td>E2, bloqueante</td>
+</tr>
+<tr>
+<td>Fluxo descrever → gerar → editar</td>
+<td>Um teste ponta a ponta, só o caminho feliz</td>
+<td>E5</td>
+</tr>
+</tbody>
+</table>
+<p>Nada disso existe hoje. A tarefa 5.2 é onde entra, e ela vem antes do M2.</p>
+<h2>Como registrar esforço real</h2>
+<p>É a prática que sustenta todas as estimativas futuras, e a mais fácil de
+abandonar. Ao fechar cada tarefa, anote no PR uma linha:</p>
+<pre><code>Estimado (PERT): 13h · Real: 21h · Motivo: a documentação do provedor
+estava desatualizada e o fluxo de callback mudou.
+</code></pre>
+<p>Depois de uns vinte pontos, o histórico do time vale mais que qualquer fórmula.
+O motivo importa mais que o número: é ele que revela o padrão.</p>
+<h2>Quando a estimativa fura</h2>
+<p>Furar estimativa não é problema — não avisar é.</p>
+<ul>
+<li><strong>Até 30% acima:</strong> siga, anote o real ao fechar.</li>
+<li><strong>Entre 30% e 100%:</strong> avise a outra pessoa no alinhamento do dia. Reavalie as
+  tarefas parecidas do mesmo épico.</li>
+<li><strong>Acima de 100%:</strong> pare. Não é mais uma tarefa mal estimada, é uma tarefa mal
+  entendida. Reabra o escopo dela antes de continuar codando.</li>
+</ul>
+<h2>Quando pedirem algo fora do escopo</h2>
+<p>Cite o não-escopo em <a href="#produto">produto.md</a> e trate como <strong>troca</strong>, não como
+adição:</p>
+<blockquote>
+<p>"Cabe sim. Entra no lugar de quê? Se nada sair, a data do M3 anda duas
+semanas — sua escolha."</p>
+</blockquote>
+<p>Isso não é burocracia. É a única forma de o número que você comunicou continuar
+significando alguma coisa daqui a um mês.</p></section>
+</body></html>
