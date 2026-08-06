@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ListTree, CheckCircle2, LayoutTemplate, Lightbulb, Shield } from "lucide-react";
+import { ArrowRight, ListTree, CheckCircle2, LayoutTemplate, Lightbulb, Shield, Zap, CheckSquare, GitBranch, Clock, Flag, Lock } from "lucide-react";
 
 import { GuidedForm } from "@/components/guided-form";
 import { Card, EmptyState, SectionTitle } from "@/components/ui";
@@ -17,20 +17,35 @@ function FeatureCard({ title, description }: { title: string; description: strin
   );
 }
 
-function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string; items: string[] }) {
+type SidebarItem = {
+  label: string;
+  icon?: any;
+  color?: string;
+};
+
+function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string; items: Array<string | SidebarItem> }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
         <Icon className="size-5 text-brand-300" aria-hidden />
         <h3 className="font-semibold text-ink-100 text-sm uppercase tracking-wide">{title}</h3>
       </div>
-      <div className="space-y-2">
-        {items.map((item, idx) => (
-          <div key={idx} className="flex items-start gap-2">
-            <CheckCircle2 className="size-4 text-brand-300 mt-0.5 shrink-0" aria-hidden />
-            <p className="text-xs text-ink-300">{item}</p>
-          </div>
-        ))}
+      <div className="space-y-3">
+        {items.map((item, idx) => {
+          const isObject = typeof item === "object";
+          const label = isObject ? item.label : item;
+          const ItemIcon = isObject && item.icon ? item.icon : CheckCircle2;
+          const color = isObject && item.color ? item.color : "text-brand-300";
+
+          return (
+            <div key={idx} className="flex items-start gap-3">
+              <div className={`rounded-full p-2 ${color.replace("text-", "bg-").replace("-300", "-300/20")} mt-0.5 shrink-0`}>
+                <ItemIcon className={`size-4 ${color}`} aria-hidden />
+              </div>
+              <p className="text-xs text-ink-300 pt-1">{label}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -100,11 +115,11 @@ export default async function Home() {
               icon={LayoutTemplate}
               title="Prévia do plano"
               items={[
-                "Épicos e Features",
-                "Tarefas por Sprint",
-                "Estimativas e Dependências",
-                "Marcos e Prazos",
-                "Plano Final",
+                { label: "Épicos e Features", icon: GitBranch, color: "text-blue-400" },
+                { label: "Tarefas por Sprint", icon: CheckSquare, color: "text-purple-400" },
+                { label: "Estimativas e Dependências", icon: Zap, color: "text-pink-400" },
+                { label: "Marcos e Prazos", icon: Flag, color: "text-indigo-400" },
+                { label: "Plano Final", icon: CheckCircle2, color: "text-cyan-400" },
               ]}
             />
           </Card>
@@ -114,10 +129,10 @@ export default async function Home() {
               icon={Lightbulb}
               title="Dicas para um ótimo plano"
               items={[
-                "Seja claro no problema",
-                "Descreva o que já existe",
-                "Informe restrições e prazos",
-                "Revise e ajuste depois",
+                { label: "Seja claro no problema", icon: Lightbulb, color: "text-yellow-400" },
+                { label: "Descreva o que já existe", icon: CheckSquare, color: "text-green-400" },
+                { label: "Informe restrições e prazos", icon: Clock, color: "text-orange-400" },
+                { label: "Revise e ajuste depois", icon: CheckCircle2, color: "text-lime-400" },
               ]}
             />
           </Card>
@@ -127,8 +142,8 @@ export default async function Home() {
               icon={Shield}
               title="Seguro e confiável"
               items={[
-                "Seus dados são protegidos",
-                "Não compartilhamos informações",
+                { label: "Seus dados são protegidos", icon: Lock, color: "text-blue-400" },
+                { label: "Não compartilhamos informações", icon: Shield, color: "text-indigo-400" },
               ]}
             />
           </Card>
