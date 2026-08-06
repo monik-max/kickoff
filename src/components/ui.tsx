@@ -24,7 +24,7 @@ export function SectionTitle({
 }) {
   return (
     <div className="mb-4 flex items-baseline justify-between gap-4">
-      <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-ink-400" title={title}>
+      <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-ink-400" {...(title && { title })}>
         {children}
       </h2>
       {hint ? <span className="text-xs text-ink-400">{hint}</span> : null}
