@@ -17,8 +17,8 @@ function SuggestStackButton({
   descriptionRef,
   stackRef,
 }: {
-  descriptionRef: React.RefObject<HTMLTextAreaElement>;
-  stackRef: React.RefObject<HTMLInputElement>;
+  descriptionRef: React.RefObject<HTMLTextAreaElement | null>;
+  stackRef: React.RefObject<HTMLInputElement | null>;
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +64,7 @@ function SuggestStackButton({
   );
 }
 
-function SubmitButton({ hasKey, formRef }: { hasKey: boolean; formRef: React.RefObject<HTMLFormElement> }) {
+function SubmitButton({ hasKey, formRef }: { hasKey: boolean; formRef: React.RefObject<HTMLFormElement | null> }) {
   const { pending } = useFormStatus();
 
   const handleNewProject = () => {

@@ -110,7 +110,7 @@ export default async function ProjectPage({
           projectId={project.id}
           teamSize={project.teamSize}
           weeklyHours={project.weeklyHours}
-        />} title="PERT (Program Evaluation and Review Technique) — estima prazo usando 3 cenários: otimista, provável e pessimista">
+        />}>
           Prazo e esforço
         </SectionTitle>
 
@@ -144,7 +144,7 @@ export default async function ProjectPage({
       </section>
 
       <section>
-        <SectionTitle hint={`${epics.length} épicos · ${allTasks.length} tarefas`} title="Épicos — grandes blocos de trabalho. Tarefas — trabalho concreto menor que compõe os épicos">
+        <SectionTitle hint={`${epics.length} épicos · ${allTasks.length} tarefas`}>
           Plano de execução
         </SectionTitle>
         {epics.length === 0 ? (
@@ -156,7 +156,7 @@ export default async function ProjectPage({
 
       {milestones.length > 0 ? (
         <section>
-          <SectionTitle title="Milestones — pontos importantes no cronograma onde você valida entregas significativas">Marcos</SectionTitle>
+          <SectionTitle>Marcos</SectionTitle>
           <ol className="relative flex flex-col gap-4 border-l border-ink-800 pl-6">
             {milestones.map((milestone) => (
               <li key={milestone.id} className="relative">
@@ -188,7 +188,7 @@ export default async function ProjectPage({
 
       {sortedRisks.length > 0 ? (
         <section>
-          <SectionTitle hint="ordenados por impacto × probabilidade" title="Riscos — eventos que podem atrasar o projeto. Mitigação — ação para reduzir o risco">
+          <SectionTitle hint="ordenados por impacto × probabilidade">
             Riscos
           </SectionTitle>
           <div className="flex flex-col gap-3">
@@ -229,7 +229,7 @@ export default async function ProjectPage({
         <section className="grid gap-6 lg:grid-cols-2">
           {premissas.length > 0 ? (
             <div>
-              <SectionTitle title="Premissas — condições que você acredita que serão verdadeiras durante o projeto">Premissas assumidas</SectionTitle>
+              <SectionTitle>Premissas assumidas</SectionTitle>
               <Card className="divide-y divide-ink-800">
                 {premissas.map((item) => (
                   <p
@@ -245,7 +245,7 @@ export default async function ProjectPage({
 
           {perguntas.length > 0 ? (
             <div>
-              <SectionTitle title="Perguntas em aberto — dúvidas que precisam de resposta antes de prosseguir">Perguntas em aberto</SectionTitle>
+              <SectionTitle>Perguntas em aberto</SectionTitle>
               <Card className="divide-y divide-ink-800">
                 {perguntas.map((item) => (
                   <p
