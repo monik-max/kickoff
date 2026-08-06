@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-12">
       <section>
-        <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        <h1 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">
           Descreva o projeto. Receba o plano de execução.
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-justify text-ink-300">
