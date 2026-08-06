@@ -17,7 +17,7 @@ export default async function Home() {
         <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           Descreva o projeto. Receba o plano de execução.
         </h1>
-        <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-300">
+        <p className="mt-3 text-[15px] leading-relaxed text-justify text-ink-300">
           O Kickoff transforma a descrição de um projeto de software em épicos,
           tarefas estimadas em três pontos, riscos com mitigação, marcos e uma
           faixa de prazo baseada na capacidade real do time. Depois é tudo
