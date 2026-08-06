@@ -189,7 +189,10 @@ function TaskRow({
 
       {editOpen && (
         <TaskEditModal
-          task={task}
+          task={{
+            ...task,
+            priority: task.priority as "alta" | "media" | "baixa",
+          }}
           projectId={projectId}
           onClose={() => setEditOpen(false)}
           onSave={() => setExpanded(false)}

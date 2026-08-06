@@ -39,7 +39,10 @@ export function TaskEditModal({
 
   const [state, formAction] = useActionState(
     async () => {
-      const result = await updateTask(task.id, projectId, formData);
+      const result = await updateTask(task.id, projectId, {
+        ...formData,
+        description: formData.description || undefined,
+      });
       if (result?.success) {
         onSave?.();
         onClose();
@@ -97,7 +100,7 @@ export function TaskEditModal({
               Descrição
             </label>
             <Textarea
-              value={formData.description}
+              value={formData.description ?? ""}
               onChange={(e) => handleChange("description", e.target.value)}
               rows={4}
               className="mt-1"
