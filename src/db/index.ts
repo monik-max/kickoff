@@ -25,7 +25,7 @@ async function createDatabase(): Promise<Database> {
   const { PGlite } = await import("@electric-sql/pglite");
   // Use in-memory for Vercel (read-only filesystem), file-based for local dev
   const isProduction = process.env.VERCEL === "1";
-  const dbPath = isProduction ? ":memory:" : (process.env.PGLITE_DIR ?? ".pglite");
+  const dbPath = isProduction ? undefined : (process.env.PGLITE_DIR ?? ".pglite");
   const client = new PGlite(dbPath);
   return drizzle(client, { schema }) as unknown as Database;
 }
