@@ -6,7 +6,7 @@ import { Loader2, Sparkles } from "lucide-react";
 
 import { createProject, type FormState } from "@/app/actions";
 import { Button, Card, Field, Input } from "@/components/ui";
-import { suggestStackFromScope, suggestIntegrationsFromScope } from "@/lib/suggestions";
+import { suggestStackFromScope, suggestIntegrationsFromScope, type StackItem } from "@/lib/suggestions";
 
 function buildDescription(data: Record<string, any>): string {
   const parts = [];
@@ -89,8 +89,8 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
     requireAI: false,
   });
 
-  const [suggestedStack, setSuggestedStack] = useState("");
-  const [suggestedIntegrations, setSuggestedIntegrations] = useState<string[]>([]);
+  const [suggestedStack, setSuggestedStack] = useState<StackItem[]>([]);
+  const [suggestedIntegrations, setSuggestedIntegrations] = useState<any[]>([]);
 
   // Atualizar sugestões em tempo real
   useEffect(() => {
@@ -140,6 +140,8 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
   );
 
   const formRef = useRef<HTMLFormElement | null>(null);
+  const [expandStack, setExpandStack] = useState(false);
+  const [expandIntegrations, setExpandIntegrations] = useState(false);
 
   return (
     <Card className="p-6">
@@ -234,10 +236,32 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
             />
           </Field>
 
-          {suggestedStack && (
-            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-3 text-sm text-ink-300">
-              <p className="mb-2 font-medium text-ink-200">💡 Stack sugerido para seu projeto:</p>
-              <p className="text-xs leading-relaxed">{suggestedStack}</p>
+          {suggestedStack.length > 0 && (
+            <div className="rounded-md border border-ink-600 bg-ink-800/50 text-sm text-ink-300">
+              <button
+                type="button"
+                onClick={() => setExpandStack(!expandStack)}
+                className="w-full flex items-center justify-between p-3 hover:bg-ink-800/30 transition-colors"
+              >
+                <p className="font-medium text-ink-200">Stack sugerido para seu projeto:</p>
+                <span className={`text-lg transition-transform ${expandStack ? "rotate-180" : ""}`}>
+                  ▼
+                </span>
+              </button>
+
+              {expandStack && (
+                <div className="border-t border-ink-600 p-4 space-y-4">
+                  {suggestedStack.map((item, idx) => (
+                    <div key={idx} className="border-l-2 border-ink-600 pl-3">
+                      <h4 className="font-medium text-ink-100">{item.layer}</h4>
+                      <p className="mt-1 text-xs text-ink-400">{item.description}</p>
+                      <p className="mt-2 text-xs text-ink-500">
+                        <span className="font-medium">Opções:</span> {item.options}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -313,19 +337,31 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
           </Field>
 
           {suggestedIntegrations.length > 0 && (
-            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-4 text-sm text-ink-300">
-              <p className="mb-4 font-medium text-ink-200">Integrações sugeridas para seu projeto:</p>
-              <div className="space-y-4">
-                {suggestedIntegrations.map((integration, idx) => (
-                  <div key={idx} className="border-l-2 border-ink-600 pl-3">
-                    <h4 className="font-medium text-ink-100">{integration.name}</h4>
-                    <p className="mt-1 text-xs text-ink-400">{integration.description}</p>
-                    <p className="mt-2 text-xs text-ink-500">
-                      <span className="font-medium">Exemplos:</span> {integration.examples}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            <div className="rounded-md border border-ink-600 bg-ink-800/50 text-sm text-ink-300">
+              <button
+                type="button"
+                onClick={() => setExpandIntegrations(!expandIntegrations)}
+                className="w-full flex items-center justify-between p-3 hover:bg-ink-800/30 transition-colors"
+              >
+                <p className="font-medium text-ink-200">Integrações sugeridas para seu projeto:</p>
+                <span className={`text-lg transition-transform ${expandIntegrations ? "rotate-180" : ""}`}>
+                  ▼
+                </span>
+              </button>
+
+              {expandIntegrations && (
+                <div className="border-t border-ink-600 p-4 space-y-4">
+                  {suggestedIntegrations.map((integration, idx) => (
+                    <div key={idx} className="border-l-2 border-ink-600 pl-3">
+                      <h4 className="font-medium text-ink-100">{integration.name}</h4>
+                      <p className="mt-1 text-xs text-ink-400">{integration.description}</p>
+                      <p className="mt-2 text-xs text-ink-500">
+                        <span className="font-medium">Exemplos:</span> {integration.examples}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>

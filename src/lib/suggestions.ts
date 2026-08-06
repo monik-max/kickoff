@@ -3,6 +3,12 @@
  * Ideal para iniciantes que não sabem qual ferramenta usar
  */
 
+export interface StackItem {
+  layer: string;
+  description: string;
+  options: string;
+}
+
 export function suggestStackFromScope(data: {
   problem?: string;
   needed?: string;
@@ -12,78 +18,146 @@ export function suggestStackFromScope(data: {
   requireOffline?: boolean;
   requirePayments?: boolean;
   requireAI?: boolean;
-}): string {
-  const suggestions: string[] = [];
+}): StackItem[] {
+  const items: StackItem[] = [];
   const input = `${data.problem} ${data.needed} ${data.technologies}`.toLowerCase();
 
   // === FRONTEND ===
   if (input.includes("web") || input.includes("portal") || input.includes("dashboard")) {
-    suggestions.push("Next.js 14 ou React");
-    suggestions.push("TypeScript");
-    suggestions.push("Tailwind CSS");
+    items.push({
+      layer: "Frontend",
+      description: "Interface e experiência do usuário",
+      options: "Next.js 14, React, TypeScript, Tailwind CSS"
+    });
   }
 
   // === MOBILE ===
   if (input.includes("app") || input.includes("mobile") || input.includes("ios") || input.includes("android")) {
-    suggestions.push("React Native ou Flutter");
+    items.push({
+      layer: "Mobile",
+      description: "Aplicativo nativo ou multiplataforma",
+      options: "React Native, Flutter, Expo"
+    });
   }
 
   // === BACKEND ===
   if (input.includes("api") || input.includes("backend") || input.includes("servidor")) {
-    suggestions.push("Node.js + Express/Fastify");
+    items.push({
+      layer: "Backend",
+      description: "Servidor e lógica de negócio",
+      options: "Node.js + Express, Fastify, NestJS"
+    });
   }
 
   // === DATABASE ===
   if (data.requireScale || input.includes("grande") || input.includes("muitos")) {
-    suggestions.push("PostgreSQL");
+    items.push({
+      layer: "Banco de Dados",
+      description: "Persistência e consultas estruturadas",
+      options: "PostgreSQL, MySQL, Amazon RDS"
+    });
   } else if (input.includes("flexível") || input.includes("documento")) {
-    suggestions.push("MongoDB");
+    items.push({
+      layer: "Banco de Dados",
+      description: "Armazenamento flexível de documentos",
+      options: "MongoDB, Firebase, DynamoDB"
+    });
   } else {
-    suggestions.push("PostgreSQL (recomendado)");
+    items.push({
+      layer: "Banco de Dados",
+      description: "SQL robusto e confiável (recomendado)",
+      options: "PostgreSQL, MySQL, MariaDB"
+    });
   }
 
   // === REALTIME ===
   if (data.requireRealtime || input.includes("tempo real") || input.includes("chat") || input.includes("notif")) {
-    suggestions.push("Socket.io ou WebSocket");
+    items.push({
+      layer: "Realtime",
+      description: "Comunicação bidirecional em tempo real",
+      options: "Socket.io, WebSocket, Pusher, Ably"
+    });
   }
 
   // === CACHE ===
   if (data.requireScale || data.requireRealtime) {
-    suggestions.push("Redis");
+    items.push({
+      layer: "Cache",
+      description: "Aceleração de dados e sessões",
+      options: "Redis, Memcached, ElastiCache"
+    });
   }
 
   // === AUTENTICAÇÃO ===
   if (input.includes("usuário") || input.includes("login") || input.includes("auth")) {
-    suggestions.push("JWT + OAuth2 ou Firebase Auth");
+    items.push({
+      layer: "Autenticação",
+      description: "Segurança e gerencimento de acesso",
+      options: "JWT + OAuth2, Firebase Auth, Auth0"
+    });
   }
 
   // === PAGAMENTOS ===
   if (data.requirePayments || input.includes("pagamento") || input.includes("cobranç")) {
-    suggestions.push("Stripe ou Mercado Pago");
+    items.push({
+      layer: "Pagamentos",
+      description: "Processamento de transações seguras",
+      options: "Stripe, Mercado Pago, PayPal"
+    });
   }
 
   // === IA ===
   if (data.requireAI || input.includes("ia") || input.includes("ai") || input.includes("inteligência")) {
-    suggestions.push("Claude API ou Ollama");
+    items.push({
+      layer: "IA/ML",
+      description: "Inteligência artificial e automação",
+      options: "Claude API, OpenAI, TensorFlow"
+    });
   }
 
   // === DEVOPS ===
-  suggestions.push("Docker");
-  if (data.requireScale) {
-    suggestions.push("Kubernetes");
-  }
-  suggestions.push("GitHub Actions (CI/CD)");
+  items.push({
+    layer: "DevOps",
+    description: "Containerização e automação",
+    options: data.requireScale ? "Docker, Kubernetes, GitHub Actions" : "Docker, GitHub Actions, Jenkins"
+  });
 
   // === DEPLOY ===
-  if (data.requireScale) {
-    suggestions.push("AWS ou Google Cloud");
-  } else {
-    suggestions.push("Vercel ou Railway (fácil)");
-  }
+  items.push({
+    layer: "Deploy",
+    description: "Hospedagem e infraestrutura",
+    options: data.requireScale ? "AWS, Google Cloud, Azure" : "Vercel, Railway, Render"
+  });
 
-  // Retornar sugestões únicas
-  const unique = Array.from(new Set(suggestions));
-  return unique.length > 0 ? unique.join(", ") : "React, Node.js, PostgreSQL, Docker, GitHub Actions";
+  return items.length > 0
+    ? items
+    : [
+        {
+          layer: "Frontend",
+          description: "Interface do usuário",
+          options: "React, Next.js, TypeScript, Tailwind CSS"
+        },
+        {
+          layer: "Backend",
+          description: "Servidor e API",
+          options: "Node.js + Express, TypeScript"
+        },
+        {
+          layer: "Banco de Dados",
+          description: "Persistência de dados",
+          options: "PostgreSQL, SQL"
+        },
+        {
+          layer: "DevOps",
+          description: "Infraestrutura",
+          options: "Docker, GitHub Actions"
+        },
+        {
+          layer: "Deploy",
+          description: "Hospedagem",
+          options: "Vercel, Railway"
+        }
+      ];
 }
 
 export function suggestIntegrationsFromScope(data: {
