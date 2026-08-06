@@ -11,7 +11,16 @@ const EXEMPLO = `Portal interno para a equipe de logística acompanhar as entreg
 Hoje isso é controlado em planilha e cada motorista manda foto do canhoto no WhatsApp.
 Precisamos de: cadastro de entregas, app para o motorista dar baixa com foto e assinatura,
 painel para o supervisor ver o que está atrasado, e integração com o ERP que já usamos
-para puxar os pedidos.`;
+para puxar os pedidos.
+
+Dicas para obter melhores planos:
+• Descreva o PROBLEMA atual (ex: "controlar em planilha é lento")
+• Quem são os USUÁRIOS (ex: "motoristas, supervisores")
+• O que EXISTE hoje (ex: "ERP Neon, WhatsApp, planilha")
+• O que PRECISA ser criado (ex: "app mobile, painel web")
+• Menção de TECNOLOGIAS já usadas (React, Node, PostgreSQL, Docker, AWS, etc)
+• Se tem requisitos especiais (realtime, escala, offline, pagamentos, IA)
+• INTEGRAÇÕES necessárias (ERP, CRM, APIs terceiras)`;
 
 function SuggestStackButton({
   descriptionRef,
