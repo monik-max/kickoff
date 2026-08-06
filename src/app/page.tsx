@@ -13,23 +13,28 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-12">
-      <section>
-        <h1 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">
-          Descreva o projeto. Receba o plano de execução.
-        </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-justify text-ink-300">
-          O Kickoff transforma a descrição de um projeto de software em épicos,
-          tarefas estimadas em três pontos, riscos com mitigação, marcos e uma
-          faixa de prazo baseada na capacidade real do time. Depois é tudo
-          editável — o plano é o começo da conversa, não o fim.
-        </p>
-      </section>
+      {/* Two-Column Hero + Form Section */}
+      <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+        {/* Left: Hero Section */}
+        <section className="flex flex-col justify-center">
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Descreva o projeto. Receba o plano de execução.
+          </h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-ink-300">
+            O Kickoff transforma a descrição de um projeto de software em épicos,
+            tarefas estimadas em três pontos, riscos com mitigação, marcos e uma
+            faixa de prazo baseada na capacidade real do time. Depois é tudo
+            editável — o plano é o começo da conversa, não o fim.
+          </p>
+        </section>
 
-      <section>
-        <SectionTitle>Novo projeto</SectionTitle>
-        <GuidedForm hasKey={hasApiKey()} />
-      </section>
+        {/* Right: Form Section */}
+        <section>
+          <GuidedForm hasKey={hasApiKey()} />
+        </section>
+      </div>
 
+      {/* Projects Section */}
       <section>
         <SectionTitle hint={`${projects.length} no histórico`}>
           Projetos
