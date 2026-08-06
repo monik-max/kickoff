@@ -93,71 +93,139 @@ export function suggestIntegrationsFromScope(data: {
   integrations?: string;
   requirePayments?: boolean;
   requireAI?: boolean;
-}): string[] {
-  const suggestions: string[] = [];
+}): { name: string; description: string; examples: string }[] {
+  const suggestions: { name: string; description: string; examples: string }[] = [];
   const input = `${data.problem} ${data.needed} ${data.existing} ${data.integrations}`.toLowerCase();
 
   // === ERP/CRM ===
   if (input.includes("erp") || input.includes("sap") || input.includes("neon")) {
-    suggestions.push("💼 ERP — Integre seu sistema legado (Neon, SAP, Totvs)");
+    suggestions.push({
+      name: "ERP/Sistemas Legados",
+      description: "Integre seu sistema antigo com a nova plataforma sem perder dados",
+      examples: "Neon, SAP, Totvs, Oracle"
+    });
   }
   if (input.includes("crm") || input.includes("salesforce") || input.includes("hubspot")) {
-    suggestions.push("👥 CRM — Gerencie clientes (Salesforce, HubSpot, Pipedrive)");
+    suggestions.push({
+      name: "CRM",
+      description: "Gerencie clientes, vendas e relacionamentos de forma centralizada",
+      examples: "Salesforce, HubSpot, Pipedrive, Zendesk"
+    });
   }
 
   // === PAGAMENTOS ===
   if (data.requirePayments || input.includes("pagamento") || input.includes("stripe")) {
-    suggestions.push("💳 Pagamentos — Processe transações (Stripe, Mercado Pago, PayPal)");
+    suggestions.push({
+      name: "Processamento de Pagamentos",
+      description: "Processe transações, cartões de crédito e cobranças com segurança",
+      examples: "Stripe, Mercado Pago, PayPal, Square"
+    });
   }
 
   // === COMUNICAÇÃO ===
   if (input.includes("slack") || input.includes("whatsapp") || input.includes("email") || input.includes("notif")) {
-    suggestions.push("💬 Slack — Notificações para o time");
-    suggestions.push("📧 SendGrid ou Mailgun — Envio de emails");
+    suggestions.push({
+      name: "Notificações e Chat",
+      description: "Envie notificações e integre comunicação em tempo real com o time",
+      examples: "Slack, Discord, Twilio, SendGrid"
+    });
+    suggestions.push({
+      name: "Email Marketing",
+      description: "Envie emails em massa, automação e rastreamento de campanhas",
+      examples: "Mailgun, SendGrid, AWS SES, Klaviyo"
+    });
   }
 
   // === ARMAZENAMENTO ===
   if (input.includes("arquivo") || input.includes("upload") || input.includes("storage") || input.includes("imagem")) {
-    suggestions.push("☁️ AWS S3 ou Google Cloud Storage — Armazene arquivos");
+    suggestions.push({
+      name: "Armazenamento em Nuvem",
+      description: "Armazene arquivos, imagens e backups de forma segura e escalável",
+      examples: "AWS S3, Google Cloud Storage, Azure Blob, Cloudinary"
+    });
   }
 
   // === ANALYTICS ===
   if (input.includes("analítica") || input.includes("métrica") || input.includes("relatório") || input.includes("dashboard")) {
-    suggestions.push("📊 Google Analytics ou Mixpanel — Acompanhe usuários");
+    suggestions.push({
+      name: "Analytics e Métricas",
+      description: "Acompanhe usuários, comportamento e desempenho em tempo real",
+      examples: "Google Analytics, Mixpanel, Amplitude, Plausible"
+    });
   }
 
   // === VIDEO/STREAMING ===
   if (input.includes("vídeo") || input.includes("stream") || input.includes("transmiss")) {
-    suggestions.push("🎬 Mux ou AWS MediaConvert — Processe vídeos");
+    suggestions.push({
+      name: "Processamento de Vídeo",
+      description: "Comprima, processe e hospede vídeos com qualidade profissional",
+      examples: "Mux, AWS MediaConvert, Cloudinary, Bunny CDN"
+    });
   }
 
   // === IA ===
   if (data.requireAI || input.includes("ia") || input.includes("ai") || input.includes("inteligência")) {
-    suggestions.push("🤖 Claude API ou OpenAI — Adicione IA ao projeto");
+    suggestions.push({
+      name: "IA e Machine Learning",
+      description: "Adicione inteligência artificial, automação e análise preditiva",
+      examples: "Claude API, OpenAI, Google AI, AWS SageMaker"
+    });
   }
 
   // === AUTENTICAÇÃO SOCIAL ===
   if (input.includes("login") || input.includes("google") || input.includes("github")) {
-    suggestions.push("🔐 Auth0 ou Firebase Auth — Login social");
+    suggestions.push({
+      name: "Autenticação e Login Social",
+      description: "Permita login com redes sociais e gerencie identidades de forma segura",
+      examples: "Auth0, Firebase Auth, Okta, Google OAuth"
+    });
   }
 
   // === GIT/DEVOPS ===
   if (input.includes("deploy") || input.includes("ci") || input.includes("cd")) {
-    suggestions.push("🚀 GitHub Actions ou GitLab CI — Automação de deploy");
+    suggestions.push({
+      name: "CI/CD e Automação",
+      description: "Automatize testes, builds e deployments para cada mudança no código",
+      examples: "GitHub Actions, GitLab CI, Jenkins, CircleCI"
+    });
   }
 
   // === MONITORAMENTO ===
   if (input.includes("erro") || input.includes("log") || input.includes("monitor") || input.includes("performance")) {
-    suggestions.push("📈 Sentry ou DataDog — Monitore erros em produção");
+    suggestions.push({
+      name: "Monitoramento e Logs",
+      description: "Acompanhe erros, performance e saúde da aplicação em produção",
+      examples: "Sentry, DataDog, New Relic, LogRocket"
+    });
   }
 
   return suggestions.length > 0
     ? suggestions
     : [
-        "💼 ERP — Se precisa integrar sistemas legados",
-        "💳 Stripe — Se precisa processar pagamentos",
-        "💬 Slack — Para notificações do time",
-        "📊 Google Analytics — Para acompanhar uso",
-        "🚀 GitHub Actions — Para CI/CD",
+        {
+          name: "ERP/Sistemas Legados",
+          description: "Integre sistemas antigos sem perder dados ou funcionalidades",
+          examples: "Neon, SAP, Totvs, Oracle"
+        },
+        {
+          name: "Processamento de Pagamentos",
+          description: "Processe transações e cobranças com segurança",
+          examples: "Stripe, Mercado Pago, PayPal"
+        },
+        {
+          name: "Notificações",
+          description: "Comunique-se com usuários e time em tempo real",
+          examples: "Slack, SendGrid, Twilio"
+        },
+        {
+          name: "Analytics",
+          description: "Entenda o comportamento dos usuários",
+          examples: "Google Analytics, Mixpanel"
+        },
+        {
+          name: "CI/CD",
+          description: "Automatize testes e deployments",
+          examples: "GitHub Actions, GitLab CI"
+        }
       ];
 }

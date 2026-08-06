@@ -313,15 +313,19 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
           </Field>
 
           {suggestedIntegrations.length > 0 && (
-            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-3 text-sm text-ink-300">
-              <p className="mb-3 font-medium text-ink-200">💡 Integrações sugeridas para seu projeto:</p>
-              <ul className="space-y-2">
+            <div className="rounded-md border border-ink-600 bg-ink-800/50 p-4 text-sm text-ink-300">
+              <p className="mb-4 font-medium text-ink-200">Integrações sugeridas para seu projeto:</p>
+              <div className="space-y-4">
                 {suggestedIntegrations.map((integration, idx) => (
-                  <li key={idx} className="text-xs leading-relaxed">
-                    {integration}
-                  </li>
+                  <div key={idx} className="border-l-2 border-ink-600 pl-3">
+                    <h4 className="font-medium text-ink-100">{integration.name}</h4>
+                    <p className="mt-1 text-xs text-ink-400">{integration.description}</p>
+                    <p className="mt-2 text-xs text-ink-500">
+                      <span className="font-medium">Exemplos:</span> {integration.examples}
+                    </p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
         </div>
