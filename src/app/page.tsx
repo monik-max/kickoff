@@ -56,6 +56,30 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-12">
+      {/* Header with Logo and Decorative K */}
+      <div className="relative flex items-center justify-between -mx-6 -mt-6 px-6 py-8 border-b border-ink-700/30">
+        {/* Left: Kickoff Logo */}
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-brand-300 to-brand-500 rounded-lg flex items-center justify-center">
+            <span className="font-bold text-ink-900 text-lg">K</span>
+          </div>
+          <span className="text-xl font-bold text-ink-100">Kickoff</span>
+        </div>
+
+        {/* Right: Decorative K */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-30">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="kGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#a78bfa" />
+                <stop offset="100%" stopColor="#7c3aed" />
+              </linearGradient>
+            </defs>
+            <path d="M 30 20 L 30 100 M 30 55 L 75 20 M 30 55 L 75 100" stroke="url(#kGradient)" strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
+        </div>
+      </div>
+
       {/* Main Content: Hero + Form + Sidebar */}
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Left: Hero + Features + Form (2 columns wide on desktop) */}
