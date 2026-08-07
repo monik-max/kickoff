@@ -55,7 +55,19 @@ export default async function Home() {
   const projects = await listProjects();
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-8">
+      {/* Compact Header with Logo */}
+      <div className="flex items-center justify-between relative">
+        {/* Left: Logo + Tagline */}
+        <div className="flex items-center gap-3">
+          <img src="/kickoff-logo.svg" alt="Kickoff" className="h-12" />
+          <span className="text-sm text-ink-400 uppercase tracking-wider">Planeje melhor. Construa com mais impacto.</span>
+        </div>
+
+        {/* Right: Decorative K */}
+        <img src="/kickoff-k-icon.svg" alt="" className="h-20 opacity-40" aria-hidden />
+      </div>
+
       {/* Main Content: Hero + Form + Sidebar */}
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Left: Hero + Features + Form (2 columns wide on desktop) */}
