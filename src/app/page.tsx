@@ -104,7 +104,9 @@ export default async function Home() {
       {/* Header */}
       <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-ink-800 pb-5">
         <img src="/kickoff-logo.svg" alt="Kickoff" className="h-9" />
-        <span className="text-[11px] uppercase tracking-[0.14em] text-ink-500">
+        {/* flex-1 + text-center centraliza no espaço restante e, quando quebra
+            linha no mobile, o span ocupa a largura toda já centralizado. */}
+        <span className="flex-1 text-center text-sm uppercase tracking-[0.14em] text-ink-500">
           Planeje melhor. Construa com mais impacto.
         </span>
       </header>
@@ -117,8 +119,10 @@ export default async function Home() {
               Descreva o projeto.
               <br className="hidden sm:block" /> Receba o plano de execução.
             </h1>
-            {/* max-w-[62ch]: acima disso a linha fica longa demais para leitura confortável. */}
-            <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-400">
+            {/* Justificado e ocupando a largura toda. hyphens-auto (com lang="pt-BR"
+                no <html>) permite quebra silábica e evita os vãos largos entre
+                palavras que o justificado produz sem hifenização. */}
+            <p className="mt-4 text-justify text-[15px] leading-relaxed text-ink-400 hyphens-auto">
               O Kickoff transforma a descrição de um projeto de software em épicos, tarefas
               estimadas em três pontos, riscos com mitigação, marcos e uma faixa de prazo baseada
               na capacidade real do time. Depois é tudo editável — o plano é o começo da conversa,
