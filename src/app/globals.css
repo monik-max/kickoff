@@ -1,16 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  /* Light mode - escala neutra clara */
+  /* Light mode - escala neutra clara.
+     950 -> 700 são superfícies e bordas; 600 -> 100 são texto (escurecendo). */
   --color-ink-950: #ffffff;
-  --color-ink-900: #f9fafb;
-  --color-ink-850: #f3f4f6;
-  --color-ink-800: #e5e7eb;
-  --color-ink-700: #d1d5db;
-  --color-ink-600: #9ca3af;
-  --color-ink-400: #6b7280;
-  --color-ink-300: #4b5563;
-  --color-ink-100: #111827;
+  --color-ink-900: #fafafa;
+  --color-ink-850: #f4f5f7;
+  --color-ink-800: #e8eaed;
+  --color-ink-700: #dcdfe4;
+  --color-ink-600: #9aa1ac;
+  --color-ink-500: #6b7280;
+  --color-ink-400: #5b6472;
+  --color-ink-300: #3f4754;
+  --color-ink-200: #2b3240;
+  --color-ink-100: #14181f;
 
   /* Violeta da marca - versão clara */
   --color-brand-300: #7c3aed;
@@ -52,9 +55,11 @@ input,
 textarea,
 select {
   color-scheme: light;
-  background-color: var(--color-ink-850);
-  color: var(--color-ink-100);
-  border-color: var(--color-ink-700);
+}
+
+/* Checkbox na cor da marca, com área de toque decente. */
+input[type="checkbox"] {
+  accent-color: var(--color-brand-500);
 }
 
 *:focus-visible {

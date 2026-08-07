@@ -1,5 +1,21 @@
 import Link from "next/link";
-import { ArrowRight, ListTree, CheckCircle2, LayoutTemplate, Lightbulb, Shield, Zap, CheckSquare, GitBranch, Clock, Flag, Lock } from "lucide-react";
+import {
+  ArrowRight,
+  ListTree,
+  CheckCircle2,
+  LayoutTemplate,
+  Lightbulb,
+  Shield,
+  Zap,
+  CheckSquare,
+  GitBranch,
+  Clock,
+  Flag,
+  Lock,
+  Target,
+  Gauge,
+  SlidersHorizontal,
+} from "lucide-react";
 
 import { GuidedForm } from "@/components/guided-form";
 import { Card, EmptyState, SectionTitle } from "@/components/ui";
@@ -8,16 +24,29 @@ import { hasApiKey } from "@/lib/planner";
 
 export const dynamic = "force-dynamic";
 
-function FeatureCard({ title, description }: { title: string; description: string }) {
+function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: any;
+  title: string;
+  description: string;
+}) {
   return (
-    <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-      <h3 className="font-medium text-ink-100">{title}</h3>
-      <p className="mt-1 text-sm text-ink-400">{description}</p>
+    <div className="flex items-start gap-3 rounded-xl border border-ink-800 bg-white p-4">
+      <div className="mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg bg-brand-500/10">
+        <Icon className="size-4 text-brand-400" aria-hidden />
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold text-ink-100">{title}</h3>
+        <p className="mt-0.5 text-[13px] leading-relaxed text-ink-500">{description}</p>
+      </div>
     </div>
   );
 }
 
-/* Pares fg/bg calibrados para fundo claro: texto -600/-700 sobre chip -50/-100. */
+/* Pares fg/bg calibrados para fundo claro: ícone -600/-700 sobre chip -50/-100. */
 const tones = {
   brand: "text-brand-400 bg-violet-100",
   blue: "text-blue-600 bg-blue-100",
@@ -35,30 +64,42 @@ type Tone = keyof typeof tones;
 
 type SidebarItem = {
   label: string;
+  description: string;
   icon?: any;
   tone?: Tone;
 };
 
-function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string; items: Array<string | SidebarItem> }) {
+function SidebarSection({
+  icon: Icon,
+  title,
+  items,
+}: {
+  icon: any;
+  title: string;
+  items: SidebarItem[];
+}) {
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="size-5 text-brand-400" aria-hidden />
-        <h3 className="font-semibold text-ink-100 text-sm uppercase tracking-wide">{title}</h3>
+      <div className="mb-4 flex items-center gap-2">
+        <Icon className="size-4 text-brand-400" aria-hidden />
+        <h3 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+          {title}
+        </h3>
       </div>
-      <div className="space-y-4">
+      <div className="space-y-3.5">
         {items.map((item, idx) => {
-          const isObject = typeof item === "object";
-          const label = isObject ? item.label : item;
-          const ItemIcon = isObject && item.icon ? item.icon : CheckCircle2;
-          const tone = tones[(isObject && item.tone) || "brand"];
+          const ItemIcon = item.icon ?? CheckCircle2;
+          const tone = tones[item.tone ?? "brand"];
 
           return (
             <div key={idx} className="flex items-start gap-3">
-              <div className={`rounded-full p-2.5 mt-0.5 shrink-0 ${tone}`}>
-                <ItemIcon className="size-5" aria-hidden />
+              <div className={`mt-0.5 grid size-8 shrink-0 place-items-center rounded-full ${tone}`}>
+                <ItemIcon className="size-4" aria-hidden />
               </div>
-              <p className="text-xs text-ink-300 leading-relaxed pt-0.5">{label}</p>
+              <div className="min-w-0">
+                <p className="text-[13px] font-medium leading-snug text-ink-100">{item.label}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-ink-500">{item.description}</p>
+              </div>
             </div>
           );
         })}
@@ -71,63 +112,76 @@ export default async function Home() {
   const projects = await listProjects();
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Compact Header with Logo */}
-      <div className="flex items-center gap-3">
-        <img src="/kickoff-logo.svg" alt="Kickoff" className="h-12" />
-        <span className="text-sm text-ink-400 uppercase tracking-wider">Planeje melhor. Construa com mais impacto.</span>
-      </div>
+    <div className="flex flex-col gap-10">
+      {/* Header */}
+      <header className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-ink-800 pb-5">
+        <img src="/kickoff-logo.svg" alt="Kickoff" className="h-9" />
+        <span className="text-[11px] uppercase tracking-[0.14em] text-ink-500">
+          Planeje melhor. Construa com mais impacto.
+        </span>
+      </header>
 
-      {/* Main Content: Hero + Form + Sidebar */}
-      <div className="grid gap-8 lg:grid-cols-3 relative">
-        {/* Left: Hero + Features + Form (2 columns wide on desktop) */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Hero Section */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Coluna principal */}
+        <div className="space-y-6 lg:col-span-2">
           <section>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Descreva o projeto. Receba o plano de execução.
+            <h1 className="text-3xl font-semibold tracking-tight text-ink-100 sm:text-[2.5rem] sm:leading-[1.12]">
+              Descreva o projeto.
+              <br className="hidden sm:block" /> Receba o plano de execução.
             </h1>
-            <p className="mt-4 text-[15px] leading-relaxed text-ink-300">
-              O Kickoff transforma a descrição de um projeto de software em épicos,
-              tarefas estimadas em três pontos, riscos com mitigação, marcos e uma
-              faixa de prazo baseada na capacidade real do time. Depois é tudo
-              editável — o plano é o começo da conversa, não o fim.
+            {/* max-w-[62ch]: acima disso a linha fica longa demais para leitura confortável. */}
+            <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-400">
+              O Kickoff transforma a descrição de um projeto de software em épicos, tarefas
+              estimadas em três pontos, riscos com mitigação, marcos e uma faixa de prazo baseada
+              na capacidade real do time. Depois é tudo editável — o plano é o começo da conversa,
+              não o fim.
             </p>
           </section>
 
-          {/* Feature Cards */}
           <div className="grid gap-3 sm:grid-cols-3">
             <FeatureCard
+              icon={Target}
               title="Plano personalizado"
               description="Baseado no seu contexto real"
             />
             <FeatureCard
+              icon={Gauge}
               title="Estimativas realistas"
               description="Alinhadas à capacidade do time"
             />
             <FeatureCard
+              icon={SlidersHorizontal}
               title="Editável e flexível"
               description="Ajuste tudo com facilidade"
             />
           </div>
 
-          {/* Form Section */}
-          <section>
-            <GuidedForm hasKey={hasApiKey()} />
-          </section>
+          <GuidedForm hasKey={hasApiKey()} />
         </div>
 
-        {/* Right: Sidebar */}
-        <aside className="space-y-6 lg:sticky lg:top-8">
+        {/* Sidebar */}
+        <aside className="space-y-4 lg:sticky lg:top-8 lg:self-start">
           <Card className="p-5">
             <SidebarSection
               icon={CheckCircle2}
               title="O que você vai receber"
               items={[
-                "Plano de execução completo",
-                "Épicos, features e tarefas organizadas",
-                "Estimativas em três pontos",
-                "Tudo editável — o plano é o começo da conversa, não o fim.",
+                {
+                  label: "Plano de execução completo",
+                  description: "Épicos, features e tarefas organizadas em sprints.",
+                },
+                {
+                  label: "Estimativas realistas",
+                  description: "Esforço, prazo e dependências baseados no seu time.",
+                },
+                {
+                  label: "Lista de prazos",
+                  description: "Cronograma claro, marcos e entregas.",
+                },
+                {
+                  label: "Tudo editável",
+                  description: "Ajuste prioridades, prazos e escopo sempre que precisar.",
+                },
               ]}
             />
           </Card>
@@ -137,11 +191,36 @@ export default async function Home() {
               icon={LayoutTemplate}
               title="Prévia do plano"
               items={[
-                { label: "Épicos e Features", icon: GitBranch, tone: "blue" as const },
-                { label: "Tarefas por Sprint", icon: CheckSquare, tone: "purple" as const },
-                { label: "Estimativas e Dependências", icon: Zap, tone: "pink" as const },
-                { label: "Marcos e Prazos", icon: Flag, tone: "indigo" as const },
-                { label: "Plano Final", icon: CheckCircle2, tone: "cyan" as const },
+                {
+                  label: "Épicos e Features",
+                  description: "Visão macro do que será construído.",
+                  icon: GitBranch,
+                  tone: "blue",
+                },
+                {
+                  label: "Tarefas por Sprint",
+                  description: "Quebras acionáveis e priorizadas.",
+                  icon: CheckSquare,
+                  tone: "purple",
+                },
+                {
+                  label: "Estimativas e Dependências",
+                  description: "Esforço, prazo e relações claras.",
+                  icon: Zap,
+                  tone: "pink",
+                },
+                {
+                  label: "Marcos e Prazos",
+                  description: "Entrega por etapas, com datas.",
+                  icon: Flag,
+                  tone: "indigo",
+                },
+                {
+                  label: "Plano Final",
+                  description: "Pronto para executar com o time.",
+                  icon: CheckCircle2,
+                  tone: "cyan",
+                },
               ]}
             />
           </Card>
@@ -151,10 +230,30 @@ export default async function Home() {
               icon={Lightbulb}
               title="Dicas para um ótimo plano"
               items={[
-                { label: "Seja claro no problema", icon: Lightbulb, tone: "amber" as const },
-                { label: "Descreva o que já existe", icon: CheckSquare, tone: "green" as const },
-                { label: "Informe restrições e prazos", icon: Clock, tone: "orange" as const },
-                { label: "Revise e ajuste depois", icon: CheckCircle2, tone: "lime" as const },
+                {
+                  label: "Seja claro no problema",
+                  description: "Quanto mais contexto, melhor o plano.",
+                  icon: Lightbulb,
+                  tone: "amber",
+                },
+                {
+                  label: "Descreva o que já existe",
+                  description: "Ajuda a entender integrações e riscos.",
+                  icon: CheckSquare,
+                  tone: "green",
+                },
+                {
+                  label: "Informe restrições e prazos",
+                  description: "Isso melhora as estimativas.",
+                  icon: Clock,
+                  tone: "orange",
+                },
+                {
+                  label: "Revise e ajuste depois",
+                  description: "O plano é o começo da conversa.",
+                  icon: CheckCircle2,
+                  tone: "lime",
+                },
               ]}
             />
           </Card>
@@ -164,19 +263,27 @@ export default async function Home() {
               icon={Shield}
               title="Seguro e confiável"
               items={[
-                { label: "Seus dados são protegidos", icon: Lock, tone: "blue" as const },
-                { label: "Não compartilhamos informações", icon: Shield, tone: "indigo" as const },
+                {
+                  label: "Seus dados são protegidos",
+                  description: "Privacidade e segurança em primeiro lugar.",
+                  icon: Lock,
+                  tone: "blue",
+                },
+                {
+                  label: "Não compartilhamos informações",
+                  description: "Sua ideia é sua, sempre.",
+                  icon: Shield,
+                  tone: "indigo",
+                },
               ]}
             />
           </Card>
         </aside>
       </div>
 
-      {/* Projects Section */}
+      {/* Projetos */}
       <section>
-        <SectionTitle hint={`${projects.length} no histórico`}>
-          Projetos
-        </SectionTitle>
+        <SectionTitle hint={`${projects.length} no histórico`}>Projetos</SectionTitle>
 
         {projects.length === 0 ? (
           <EmptyState title="Nenhum projeto ainda">
@@ -189,22 +296,19 @@ export default async function Home() {
                 <Link href={`/projetos/${project.id}`} className="block">
                   <Card className="group h-full p-5 transition-colors hover:border-ink-600">
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-medium tracking-tight">
-                        {project.name}
-                      </h3>
+                      <h3 className="font-medium tracking-tight text-ink-100">{project.name}</h3>
                       <ArrowRight
-                        className="mt-0.5 size-4 shrink-0 text-ink-600 transition-colors group-hover:text-brand-300"
+                        className="mt-0.5 size-4 shrink-0 text-ink-600 transition-colors group-hover:text-brand-400"
                         aria-hidden
                       />
                     </div>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-400">
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-500">
                       {project.summary ?? project.description}
                     </p>
-                    <div className="mt-4 flex items-center gap-3 text-xs text-ink-400">
+                    <div className="mt-4 flex items-center gap-3 text-xs text-ink-500">
                       <span className="inline-flex items-center gap-1.5">
                         <ListTree className="size-3.5" aria-hidden />
-                        <span className="tnum">{project.taskCount}</span>{" "}
-                        tarefas
+                        <span className="tnum">{project.taskCount}</span> tarefas
                       </span>
                       <span aria-hidden>·</span>
                       <span className="tnum">
@@ -213,9 +317,7 @@ export default async function Home() {
                       </span>
                       <span aria-hidden>·</span>
                       <span>
-                        {project.source === "claude"
-                          ? "Claude Opus 5"
-                          : "heurístico"}
+                        {project.source === "claude" ? "Claude Opus 5" : "heurístico"}
                       </span>
                     </div>
                   </Card>

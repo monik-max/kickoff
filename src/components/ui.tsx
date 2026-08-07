@@ -5,7 +5,9 @@ export function Card({ className, ...props }: ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-ink-800 bg-ink-900/60 shadow-sm",
+        // Superfície branca sólida + borda + sombra curta. No tema claro a
+        // definição do card vem da borda/sombra, não do contraste de fundo.
+        "rounded-xl border border-ink-800 bg-white shadow-[0_1px_2px_rgba(16,24,40,0.04),0_1px_3px_rgba(16,24,40,0.06)]",
         className,
       )}
       {...props}
@@ -32,11 +34,11 @@ export function SectionTitle({
 
 const buttonVariants = {
   primary:
-    "bg-brand-500 text-white hover:bg-brand-400 disabled:bg-brand-600/50 disabled:text-white/60",
+    "bg-brand-500 text-white shadow-sm hover:bg-brand-400 active:bg-brand-600 disabled:bg-ink-600 disabled:text-white/70 disabled:shadow-none",
   ghost:
-    "border border-ink-700 bg-transparent text-ink-100 hover:border-ink-600 hover:bg-ink-800/60",
+    "border border-ink-700 bg-white text-ink-200 hover:border-ink-600 hover:bg-ink-850 active:bg-ink-800",
   danger:
-    "border border-stop-400/40 bg-transparent text-stop-400 hover:bg-stop-400/10",
+    "border border-stop-400/40 bg-white text-stop-400 hover:bg-stop-400/5",
 } as const;
 
 export function Button({
@@ -47,7 +49,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed",
+        "inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-all disabled:cursor-not-allowed",
         buttonVariants[variant],
         className,
       )}
@@ -67,15 +69,17 @@ export function Field({
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-ink-100">{label}</span>
+      <span className="text-sm font-medium text-ink-200">{label}</span>
       {children}
-      {hint ? <span className="text-xs text-ink-400">{hint}</span> : null}
+      {hint ? <span className="text-xs text-ink-500">{hint}</span> : null}
     </label>
   );
 }
 
+// h-10 alinha com Button; ring de foco em vez de só trocar a borda (o shift de
+// 1px na borda sozinho é um sinal fraco de foco).
 const controlClass =
-  "w-full rounded-lg border border-ink-700 bg-ink-850 px-3 py-2 text-sm text-ink-100 placeholder:text-ink-600 transition-colors hover:border-ink-600 focus:border-brand-500";
+  "h-10 w-full rounded-lg border border-ink-700 bg-white px-3 text-sm text-ink-100 placeholder:text-ink-600 transition-shadow hover:border-ink-600 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/12";
 
 export function Input({ className, ref, ...props }: ComponentProps<"input"> & { ref?: any }) {
   return <input ref={ref} className={cn(controlClass, className)} {...props} />;
@@ -85,7 +89,8 @@ export function Textarea({ className, ref, ...props }: ComponentProps<"textarea"
   return (
     <textarea
       ref={ref}
-      className={cn(controlClass, "resize-y leading-relaxed", className)}
+      // h-auto/min-h anulam o h-10 do controlClass via twMerge.
+      className={cn(controlClass, "h-auto min-h-24 resize-y py-2 leading-relaxed", className)}
       {...props}
     />
   );
@@ -103,8 +108,8 @@ export function Stat({
   tone?: "default" | "brand";
 }) {
   return (
-    <div className="rounded-xl border border-ink-800 bg-ink-900/60 px-4 py-3">
-      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-400">
+    <div className="rounded-xl border border-ink-800 bg-white px-4 py-3">
+      <div className="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-500">
         {label}
       </div>
       <div

@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useRef, useState, useEffect } from "react";
+import { useActionState, useRef, useState, useEffect, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
-import { Loader2, Sparkles } from "lucide-react";
+import { ChevronDown, Loader2, Sparkles } from "lucide-react";
 
 import { createProject, type FormState } from "@/app/actions";
 import { Button, Card, Field, Input } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import { suggestStackFromScope, suggestIntegrationsFromScope, type StackItem } from "@/lib/suggestions";
 
 function buildDescription(data: Record<string, any>): string {
@@ -33,6 +34,115 @@ function buildDescription(data: Record<string, any>): string {
   return parts.join("\n\n");
 }
 
+/* Seção numerada. O número dá wayfinding num formulário de 6 blocos — sem ele
+   o usuário perde a noção de onde está durante o scroll. Separação por régua
+   em vez de borda: evita empilhar superfícies dentro do Card. */
+function Section({
+  step,
+  title,
+  children,
+}: {
+  step: number;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="border-t border-ink-800 pt-7 first:border-t-0 first:pt-0">
+      <div className="mb-4 flex items-center gap-2.5">
+        <span className="tnum grid size-6 shrink-0 place-items-center rounded-full bg-brand-500/10 text-[11px] font-semibold text-brand-400">
+          {step}
+        </span>
+        <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+          {title}
+        </h3>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/* Checkbox como alvo clicável inteiro. O input nativo solto tem ~16px de área
+   de clique; embrulhado assim o alvo vira a linha toda, e o estado marcado
+   ganha sinal visual via has-[:checked]. */
+function CheckOption({
+  name,
+  label,
+  onChange,
+}: {
+  name: string;
+  label: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-ink-800 px-3 py-2.5 transition-colors hover:border-ink-600 hover:bg-ink-850 has-[:checked]:border-brand-500/40 has-[:checked]:bg-brand-500/5">
+      <input
+        type="checkbox"
+        name={name}
+        className="size-4 shrink-0"
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span className="text-sm text-ink-200">{label}</span>
+    </label>
+  );
+}
+
+function SuggestionPanel({
+  title,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-lg border border-ink-800">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="flex w-full items-center justify-between gap-3 bg-ink-850 px-3.5 py-3 text-left transition-colors hover:bg-ink-800"
+      >
+        <span className="text-sm font-medium text-ink-200">{title}</span>
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 text-ink-500 transition-transform duration-200",
+            open && "rotate-180",
+          )}
+          aria-hidden
+        />
+      </button>
+      {open ? (
+        <div className="border-t border-ink-800 px-3.5 py-3.5">{children}</div>
+      ) : null}
+    </div>
+  );
+}
+
+function SuggestionItem({
+  name,
+  description,
+  meta,
+  metaLabel,
+}: {
+  name: string;
+  description: string;
+  meta: string;
+  metaLabel: string;
+}) {
+  return (
+    <div className="border-l-2 border-brand-500/25 pl-3">
+      <h4 className="text-sm font-medium text-ink-100">{name}</h4>
+      <p className="mt-0.5 text-xs leading-relaxed text-ink-500">{description}</p>
+      <p className="mt-1.5 text-xs text-ink-400">
+        <span className="font-medium text-ink-300">{metaLabel}:</span> {meta}
+      </p>
+    </div>
+  );
+}
+
 function SubmitButton({ formRef }: { formRef: React.RefObject<HTMLFormElement | null> }) {
   const { pending } = useFormStatus();
 
@@ -48,28 +158,32 @@ function SubmitButton({ formRef }: { formRef: React.RefObject<HTMLFormElement | 
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button type="submit" disabled={pending}>
-        {pending ? (
-          <>
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-            Analisando o projeto…
-          </>
-        ) : (
-          <>
-            <Sparkles className="size-4" aria-hidden />
-            Gerar plano
-          </>
-        )}
-      </Button>
-      <Button type="button" variant="ghost" onClick={handleNewProject} disabled={pending}>
-        Novo Projeto
-      </Button>
-      <span className="text-xs text-ink-400">
-        {pending
-          ? "O Kickoff está quebrando o escopo em épicos, tarefas e riscos…"
-          : "Responda as perguntas abaixo e geramos o plano automaticamente."}
-      </span>
+    // Barra de ação fixa ao rodapé da viewport enquanto o card está em vista.
+    // Sem isso o CTA fica enterrado no fim de um formulário de ~15 campos.
+    <div className="sticky bottom-0 -mx-6 -mb-6 mt-2 rounded-b-xl border-t border-ink-800 bg-white px-6 py-4 shadow-[0_-6px_16px_-6px_rgba(16,24,40,0.10)]">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" disabled={pending}>
+          {pending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+              Analisando o projeto…
+            </>
+          ) : (
+            <>
+              <Sparkles className="size-4" aria-hidden />
+              Gerar plano
+            </>
+          )}
+        </Button>
+        <Button type="button" variant="ghost" onClick={handleNewProject} disabled={pending}>
+          Novo Projeto
+        </Button>
+        <span className="text-xs text-ink-500">
+          {pending
+            ? "O Kickoff está quebrando o escopo em épicos, tarefas e riscos…"
+            : "Campos marcados são obrigatórios."}
+        </span>
+      </div>
     </div>
   );
 }
@@ -145,262 +259,186 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
 
   return (
     <Card className="p-6">
-      <form ref={formRef} action={formAction} className="flex flex-col gap-5">
-        {/* Básico */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Básico
-          </h3>
-
-          <Field label="Nome do projeto">
-            <Input
-              name="name"
-              required
-              placeholder="Portal de entregas"
-              maxLength={120}
-            />
-          </Field>
-
-          <Field label="Gerente de Projeto" hint="Responsável pela execução.">
-            <Input name="projectManager" placeholder="João Silva" maxLength={120} />
-          </Field>
-        </div>
-
-        {/* Escopo */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Escopo
-          </h3>
-
-          <Field label="Qual é o problema que precisa resolver?" hint="Ex: controlar em planilha é lento">
-            <Input
-              name="problem"
-              required
-              placeholder="Descreva o problema atual"
-              maxLength={300}
-              onChange={(e) => setFormValues({ ...formValues, problem: e.target.value })}
-            />
-          </Field>
-
-          <Field label="Quem são os usuários?" hint="Ex: motoristas, supervisores, gerentes">
-            <Input
-              name="users"
-              required
-              placeholder="Listar os tipos de usuários"
-              maxLength={200}
-            />
-          </Field>
-
-          <Field label="O que existe hoje?" hint="Ex: ERP Neon, WhatsApp, planilha">
-            <Input
-              name="existing"
-              required
-              placeholder="Descrever o sistema/processo atual"
-              maxLength={300}
-            />
-          </Field>
-
-          <Field label="O que precisa ser criado?" hint="Ex: app mobile, painel web, integração">
-            <Input
-              name="needed"
-              required
-              placeholder="Descrever o que será construído"
-              maxLength={300}
-              onChange={(e) => setFormValues({ ...formValues, needed: e.target.value })}
-            />
-          </Field>
-        </div>
-
-        {/* Técnico */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Técnico
-          </h3>
-
-          <Field
-            label="Tecnologias já usadas"
-            hint="Ex: React, Node.js, PostgreSQL, Docker"
-          >
-            <Input
-              name="technologies"
-              placeholder="Listar tecnologias existentes"
-              maxLength={300}
-            />
-          </Field>
-
-          <Field label="Stack preferido (opcional)">
-            <Input
-              name="stack"
-              placeholder="Ex: Next.js + Postgres"
-              maxLength={200}
-            />
-          </Field>
-
-          {suggestedStack.length > 0 && (
-            <div className="rounded-md border border-ink-600 bg-ink-800/50 text-sm text-ink-300">
-              <button
-                type="button"
-                onClick={() => setExpandStack(!expandStack)}
-                className="w-full flex items-center justify-between p-3 hover:bg-ink-800/30 transition-colors"
-              >
-                <p className="font-medium text-ink-200">Stack sugerido para seu projeto:</p>
-                <span className={`text-lg transition-transform ${expandStack ? "rotate-180" : ""}`}>
-                  ▼
-                </span>
-              </button>
-
-              {expandStack && (
-                <div className="border-t border-ink-600 p-4 space-y-4">
-                  {suggestedStack.map((item, idx) => (
-                    <div key={idx} className="border-l-2 border-ink-600 pl-3">
-                      <h4 className="font-medium text-ink-100">{item.layer}</h4>
-                      <p className="mt-1 text-xs text-ink-400">{item.description}</p>
-                      <p className="mt-2 text-xs text-ink-500">
-                        <span className="font-medium">Opções:</span> {item.options}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Requisitos especiais */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Requisitos especiais
-          </h3>
-
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="requireRealtime"
-                className="size-4"
-                onChange={(e) => setFormValues({ ...formValues, requireRealtime: e.target.checked })}
-              />
-              <span className="text-sm text-ink-200">Precisa de tempo real (chat, notificações)</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="requireScale"
-                className="size-4"
-                onChange={(e) => setFormValues({ ...formValues, requireScale: e.target.checked })}
-              />
-              <span className="text-sm text-ink-200">Precisa de escala alta (muitos usuários/dados)</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="requireOffline"
-                className="size-4"
-                onChange={(e) => setFormValues({ ...formValues, requireOffline: e.target.checked })}
-              />
-              <span className="text-sm text-ink-200">Precisa funcionar offline</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="requirePayments"
-                className="size-4"
-                onChange={(e) => setFormValues({ ...formValues, requirePayments: e.target.checked })}
-              />
-              <span className="text-sm text-ink-200">Precisa processar pagamentos</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                name="requireAI"
-                className="size-4"
-                onChange={(e) => setFormValues({ ...formValues, requireAI: e.target.checked })}
-              />
-              <span className="text-sm text-ink-200">Precisa de IA/ML</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Integrações */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Integrações
-          </h3>
-
-          <Field label="Quais sistemas/APIs precisa integrar?" hint="Ex: ERP, CRM, Stripe, Slack">
-            <Input
-              name="integrations"
-              placeholder="Listar integrações necessárias (ou deixe em branco)"
-              maxLength={300}
-              onChange={(e) => setFormValues({ ...formValues, integrations: e.target.value })}
-            />
-          </Field>
-
-          {suggestedIntegrations.length > 0 && (
-            <div className="rounded-md border border-ink-600 bg-ink-800/50 text-sm text-ink-300">
-              <button
-                type="button"
-                onClick={() => setExpandIntegrations(!expandIntegrations)}
-                className="w-full flex items-center justify-between p-3 hover:bg-ink-800/30 transition-colors"
-              >
-                <p className="font-medium text-ink-200">Integrações sugeridas para seu projeto:</p>
-                <span className={`text-lg transition-transform ${expandIntegrations ? "rotate-180" : ""}`}>
-                  ▼
-                </span>
-              </button>
-
-              {expandIntegrations && (
-                <div className="border-t border-ink-600 p-4 space-y-4">
-                  {suggestedIntegrations.map((integration, idx) => (
-                    <div key={idx} className="border-l-2 border-ink-600 pl-3">
-                      <h4 className="font-medium text-ink-100">{integration.name}</h4>
-                      <p className="mt-1 text-xs text-ink-400">{integration.description}</p>
-                      <p className="mt-2 text-xs text-ink-500">
-                        <span className="font-medium">Exemplos:</span> {integration.examples}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Capacidade */}
-        <div className="rounded-lg border border-ink-700 bg-ink-800/30 p-4">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-ink-300">
-            Capacidade
-          </h3>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="Tamanho do time" hint="Pessoas dedicadas.">
+      <form ref={formRef} action={formAction} className="flex flex-col gap-7">
+        <Section step={1} title="Básico">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Nome do projeto">
               <Input
-                name="teamSize"
-                type="number"
-                min={1}
-                max={50}
-                defaultValue={3}
+                name="name"
                 required
+                placeholder="Portal de entregas"
+                maxLength={120}
               />
             </Field>
-            <Field label="Horas por semana" hint="Por pessoa, tempo efetivo.">
+
+            <Field label="Gerente de Projeto" hint="Responsável pela execução.">
+              <Input name="projectManager" placeholder="João Silva" maxLength={120} />
+            </Field>
+          </div>
+        </Section>
+
+        <Section step={2} title="Escopo">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Qual é o problema que precisa resolver?"
+              hint="Ex: controlar em planilha é lento"
+            >
               <Input
-                name="weeklyHours"
-                type="number"
-                min={1}
-                max={60}
-                defaultValue={30}
+                name="problem"
                 required
+                placeholder="Descreva o problema atual"
+                maxLength={300}
+                onChange={(e) => setFormValues({ ...formValues, problem: e.target.value })}
               />
+            </Field>
+
+            <Field label="Quem são os usuários?" hint="Ex: motoristas, supervisores, gerentes">
+              <Input
+                name="users"
+                required
+                placeholder="Listar os tipos de usuários"
+                maxLength={200}
+              />
+            </Field>
+
+            <Field label="O que existe hoje?" hint="Ex: ERP Neon, WhatsApp, planilha">
+              <Input
+                name="existing"
+                required
+                placeholder="Descrever o sistema/processo atual"
+                maxLength={300}
+              />
+            </Field>
+
+            <Field label="O que precisa ser criado?" hint="Ex: app mobile, painel web, integração">
+              <Input
+                name="needed"
+                required
+                placeholder="Descrever o que será construído"
+                maxLength={300}
+                onChange={(e) => setFormValues({ ...formValues, needed: e.target.value })}
+              />
+            </Field>
+          </div>
+        </Section>
+
+        <Section step={3} title="Técnico">
+          <div className="grid gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Tecnologias já usadas" hint="Ex: React, Node.js, PostgreSQL, Docker">
+                <Input
+                  name="technologies"
+                  placeholder="Listar tecnologias existentes"
+                  maxLength={300}
+                />
+              </Field>
+
+              <Field label="Stack preferido" hint="Opcional.">
+                <Input name="stack" placeholder="Ex: Next.js + Postgres" maxLength={200} />
+              </Field>
+            </div>
+
+            {suggestedStack.length > 0 ? (
+              <SuggestionPanel
+                title="Stack sugerido para seu projeto"
+                open={expandStack}
+                onToggle={() => setExpandStack(!expandStack)}
+              >
+                <div className="grid gap-3.5">
+                  {suggestedStack.map((item, idx) => (
+                    <SuggestionItem
+                      key={idx}
+                      name={item.layer}
+                      description={item.description}
+                      meta={item.options}
+                      metaLabel="Opções"
+                    />
+                  ))}
+                </div>
+              </SuggestionPanel>
+            ) : null}
+          </div>
+        </Section>
+
+        <Section step={4} title="Requisitos especiais">
+          <div className="grid gap-2 sm:grid-cols-2">
+            <CheckOption
+              name="requireRealtime"
+              label="Tempo real (chat, notificações)"
+              onChange={(checked) => setFormValues({ ...formValues, requireRealtime: checked })}
+            />
+            <CheckOption
+              name="requireScale"
+              label="Escala alta (muitos usuários/dados)"
+              onChange={(checked) => setFormValues({ ...formValues, requireScale: checked })}
+            />
+            <CheckOption
+              name="requireOffline"
+              label="Funcionar offline"
+              onChange={(checked) => setFormValues({ ...formValues, requireOffline: checked })}
+            />
+            <CheckOption
+              name="requirePayments"
+              label="Processar pagamentos"
+              onChange={(checked) => setFormValues({ ...formValues, requirePayments: checked })}
+            />
+            <CheckOption
+              name="requireAI"
+              label="IA/ML"
+              onChange={(checked) => setFormValues({ ...formValues, requireAI: checked })}
+            />
+          </div>
+        </Section>
+
+        <Section step={5} title="Integrações">
+          <div className="grid gap-4">
+            <Field label="Quais sistemas/APIs precisa integrar?" hint="Ex: ERP, CRM, Stripe, Slack">
+              <Input
+                name="integrations"
+                placeholder="Listar integrações necessárias (ou deixe em branco)"
+                maxLength={300}
+                onChange={(e) => setFormValues({ ...formValues, integrations: e.target.value })}
+              />
+            </Field>
+
+            {suggestedIntegrations.length > 0 ? (
+              <SuggestionPanel
+                title="Integrações sugeridas para seu projeto"
+                open={expandIntegrations}
+                onToggle={() => setExpandIntegrations(!expandIntegrations)}
+              >
+                <div className="grid gap-3.5">
+                  {suggestedIntegrations.map((integration, idx) => (
+                    <SuggestionItem
+                      key={idx}
+                      name={integration.name}
+                      description={integration.description}
+                      meta={integration.examples}
+                      metaLabel="Exemplos"
+                    />
+                  ))}
+                </div>
+              </SuggestionPanel>
+            ) : null}
+          </div>
+        </Section>
+
+        <Section step={6} title="Capacidade">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Field label="Tamanho do time" hint="Pessoas dedicadas.">
+              <Input name="teamSize" type="number" min={1} max={50} defaultValue={3} required />
+            </Field>
+            <Field label="Horas por semana" hint="Por pessoa, tempo efetivo.">
+              <Input name="weeklyHours" type="number" min={1} max={60} defaultValue={30} required />
             </Field>
             <Field label="Prazo desejado" hint="Opcional.">
               <Input name="targetDate" type="date" />
             </Field>
           </div>
-        </div>
+        </Section>
 
         {state.error ? (
-          <p className="rounded-lg border border-stop-400/30 bg-stop-400/10 px-3 py-2 text-sm text-stop-400">
+          <p className="rounded-lg border border-stop-400/30 bg-stop-400/5 px-3 py-2 text-sm text-stop-400">
             {state.error}
           </p>
         ) : null}
