@@ -30,7 +30,7 @@ function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string
         <Icon className="size-5 text-brand-300" aria-hidden />
         <h3 className="font-semibold text-ink-100 text-sm uppercase tracking-wide">{title}</h3>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {items.map((item, idx) => {
           const isObject = typeof item === "object";
           const label = isObject ? item.label : item;
@@ -39,10 +39,10 @@ function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string
 
           return (
             <div key={idx} className="flex items-start gap-3">
-              <div className={`rounded-full p-2 ${color.replace("text-", "bg-").replace("-300", "-300/20")} mt-0.5 shrink-0`}>
-                <ItemIcon className={`size-4 ${color}`} aria-hidden />
+              <div className={`rounded-full p-2.5 ${color.replace("text-", "bg-").replace("-300", "-300/35")} mt-0.5 shrink-0`}>
+                <ItemIcon className={`size-5 ${color}`} aria-hidden />
               </div>
-              <p className="text-xs text-ink-300 pt-1">{label}</p>
+              <p className="text-xs text-ink-300 leading-relaxed pt-0.5">{label}</p>
             </div>
           );
         })}
