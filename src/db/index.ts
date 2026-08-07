@@ -97,18 +97,8 @@ const BOOTSTRAP = [
     text TEXT NOT NULL,
     kind TEXT NOT NULL DEFAULT 'pergunta'
   )`,
-  sql`
-  CREATE TABLE IF NOT EXISTS project_versions (
-    id TEXT PRIMARY KEY,
-    project_id TEXT NOT NULL,
-    snapshot TEXT NOT NULL,
-    change_type TEXT NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT now()
-  )`,
   sql`CREATE INDEX IF NOT EXISTS tasks_project_idx ON tasks (project_id)`,
   sql`CREATE INDEX IF NOT EXISTS epics_project_idx ON epics (project_id)`,
-  sql`CREATE INDEX IF NOT EXISTS versions_project_idx ON project_versions (project_id)`,
 ];
 
 // O dev server do Next recarrega módulos a cada edição; sem o singleton global

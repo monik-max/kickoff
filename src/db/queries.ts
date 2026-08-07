@@ -1,21 +1,18 @@
 import "server-only";
 
 import { asc, desc, eq } from "drizzle-orm";
-import { nanoid } from "nanoid";
 import { getDb } from "./index";
 import {
   epics,
   milestones,
   openQuestions,
   projects,
-  projectVersions,
   risks,
   tasks,
   type Epic,
   type Milestone,
   type OpenQuestion,
   type Project,
-  type ProjectVersion,
   type Risk,
   type Task,
 } from "./schema";
@@ -81,57 +78,4 @@ export async function getProject(id: string): Promise<ProjectDetail | null> {
     milestones: milestoneRows,
     questions: questionRows,
   };
-}
-
-/**
- * Salva uma versão do projeto (snapshot)
- */
-export async function saveProjectVersion(
-  projectId: string,
-  changeType: "criação" | "edição-tarefa" | "edição-projeto" | "edição-risco" | "edição-marco",
-  // `unknown`: aqui o snapshot é só JSON.stringify'ado. Tipar como
-  // ProjectSnapshot criaria import circular queries <-> version-snapshot.
-  snapshot: unknown,
-  description?: string
-) {
-  const db = await getDb();
-
-  await db.insert(projectVersions).values({
-    id: nanoid(),
-    projectId,
-    changeType,
-    snapshot: JSON.stringify(snapshot),
-    description,
-  });
-}
-
-/**
- * Lista histórico de versões do projeto
- */
-export async function getProjectHistory(projectId: string): Promise<ProjectVersion[]> {
-  const db = await getDb();
-
-  return await db
-    .select()
-    .from(projectVersions)
-    .where(eq(projectVersions.projectId, projectId))
-    .orderBy(desc(projectVersions.createdAt));
-}
-
-/**
- * Recupera um snapshot específico.
- *
- * NOTA: sem chamadas hoje. Retorna `unknown` porque o valor vem de JSON.parse —
- * quem consumir precisa validar antes de usar.
- */
-export async function getVersionSnapshot(versionId: string): Promise<unknown | null> {
-  const db = await getDb();
-
-  const [version] = await db
-    .select()
-    .from(projectVersions)
-    .where(eq(projectVersions.id, versionId));
-
-  if (!version) return null;
-  return JSON.parse(version.snapshot);
 }

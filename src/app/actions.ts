@@ -17,8 +17,6 @@ import {
 } from "@/db/schema";
 import { generatePlan } from "@/lib/planner";
 import { suggestStack } from "@/lib/stack-suggester";
-import { getProject, saveProjectVersion } from "@/db/queries";
-import { createProjectSnapshot } from "@/lib/version-snapshot";
 
 const NewProjectSchema = z.object({
   name: z.string().trim().min(3, "Dê um nome com pelo menos 3 caracteres."),
@@ -215,13 +213,6 @@ export async function updateTask(
     .safeParse(data);
 
   if (!values.success) return { error: "Dados inválidos" };
-
-  // Salva versão ANTES da mudança
-  const detail = await getProject(projectId);
-  if (detail) {
-    const snapshot = createProjectSnapshot(detail);
-    await saveProjectVersion(projectId, "edição-tarefa", snapshot, `Tarefa editada`);
-  }
 
   const db = await getDb();
   await db.update(tasks).set(values.data).where(eq(tasks.id, taskId));

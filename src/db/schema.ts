@@ -78,22 +78,9 @@ export const openQuestions = pgTable("open_questions", {
   kind: text("kind").notNull().default("pergunta"),
 });
 
-export const projectVersions = pgTable("project_versions", {
-  id: text("id").primaryKey(),
-  projectId: text("project_id").notNull(),
-  /** snapshot JSON de todo o plano */
-  snapshot: text("snapshot").notNull(),
-  /** 'criação' | 'edição-tarefa' | 'edição-projeto' | 'edição-risco' | 'edição-marco' */
-  changeType: text("change_type").notNull(),
-  /** descrição breve da mudança */
-  description: text("description"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-
 export type Project = typeof projects.$inferSelect;
 export type Epic = typeof epics.$inferSelect;
 export type Task = typeof tasks.$inferSelect;
 export type Risk = typeof risks.$inferSelect;
 export type Milestone = typeof milestones.$inferSelect;
 export type OpenQuestion = typeof openQuestions.$inferSelect;
-export type ProjectVersion = typeof projectVersions.$inferSelect;
