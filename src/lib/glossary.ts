@@ -429,3 +429,45 @@ export const LANGUAGE_PICKS: LanguagePick[] = [
     trap: "Escolher por desempenho antes de ter problema de desempenho. Otimizar cedo custa prazo e legibilidade.",
   },
 ];
+
+/* ------------------------------------------------------------------ */
+
+/** Âncora estável da ferramenta na página do glossário. */
+export function toolSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+const TOOL_INDEX = new Map<string, Tool>();
+for (const category of CATEGORIES) {
+  for (const tool of category.tools) {
+    TOOL_INDEX.set(toolSlug(tool.name), tool);
+  }
+}
+
+/**
+ * Casa um nome citado numa sugestão de stack com a ferramenta do glossário.
+ *
+ * As sugestões trazem variações — "Next.js 14" para "Next.js", "Claude API"
+ * para "Claude API (Anthropic)". Por isso, além da correspondência exata,
+ * aceita quando um slug é prefixo do outro. Sem isso, quase nenhum nome
+ * sugerido viraria link.
+ */
+export function findTool(name: string): { tool: Tool; slug: string } | null {
+  const wanted = toolSlug(name);
+  if (!wanted) return null;
+
+  const exact = TOOL_INDEX.get(wanted);
+  if (exact) return { tool: exact, slug: wanted };
+
+  for (const [slug, tool] of TOOL_INDEX) {
+    if (slug.startsWith(`${wanted}-`) || wanted.startsWith(`${slug}-`)) {
+      return { tool, slug };
+    }
+  }
+  return null;
+}

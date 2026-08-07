@@ -8,6 +8,7 @@ import {
   CATEGORIES,
   PRICING_HINT,
   PRICING_LABEL,
+  toolSlug,
   type Pricing,
   type Tool,
 } from "@/lib/glossary";
@@ -32,7 +33,12 @@ function normalize(text: string) {
 
 function ToolCard({ tool }: { tool: Tool }) {
   return (
-    <div className="rounded-lg border border-ink-800 bg-white p-4">
+    <div
+      // Âncora usada pelos links vindos das sugestões de stack do formulário.
+      // scroll-mt compensa a barra superior ao pular para cá.
+      id={`ferramenta-${toolSlug(tool.name)}`}
+      className="scroll-mt-24 rounded-lg border border-ink-800 bg-white p-4 target:border-brand-500/50 target:ring-4 target:ring-brand-500/12"
+    >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-sm font-semibold text-ink-100">{tool.name}</h3>
         <span

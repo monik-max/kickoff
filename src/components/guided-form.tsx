@@ -8,6 +8,7 @@ import {
   type ReactNode,
   type ComponentProps,
 } from "react";
+import Link from "next/link";
 import { flushSync } from "react-dom";
 import { useFormStatus } from "react-dom";
 import { ChevronDown, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
@@ -15,6 +16,7 @@ import { ChevronDown, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-reac
 import { createProject, type FormState } from "@/app/actions";
 import { Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { findTool } from "@/lib/glossary";
 import { suggestStackFromScope, suggestIntegrationsFromScope } from "@/lib/suggestions";
 
 type DescriptionInput = {
@@ -194,6 +196,37 @@ function SuggestionPanel({
   );
 }
 
+/* Liga a receita aos ingredientes: cada nome citado numa sugestão que exista no
+   glossário vira link para a própria verba. O que não existe lá fica como texto
+   comum — melhor um link a menos do que um link que não explica nada. */
+function LinkedTools({ names }: { names: string }) {
+  const parts = names.split(",").map((p) => p.trim()).filter(Boolean);
+
+  return (
+    <>
+      {parts.map((part, i) => {
+        const found = findTool(part);
+        return (
+          <span key={`${part}-${i}`}>
+            {i > 0 ? ", " : ""}
+            {found ? (
+              <Link
+                href={`/glossario#ferramenta-${found.slug}`}
+                title={`${found.tool.what} — ver no glossário`}
+                className="underline decoration-brand-500/40 underline-offset-2 transition-colors hover:text-brand-400 hover:decoration-brand-500"
+              >
+                {part}
+              </Link>
+            ) : (
+              part
+            )}
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
 function SuggestionItem({
   name,
   description,
@@ -210,7 +243,8 @@ function SuggestionItem({
       <h4 className="text-sm font-medium text-ink-100">{name}</h4>
       <p className="mt-0.5 text-xs leading-relaxed text-ink-500">{description}</p>
       <p className="mt-1.5 text-xs text-ink-400">
-        <span className="font-medium text-ink-300">{metaLabel}:</span> {meta}
+        <span className="font-medium text-ink-300">{metaLabel}:</span>{" "}
+        <LinkedTools names={meta} />
       </p>
     </div>
   );
