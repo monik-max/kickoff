@@ -4,14 +4,8 @@ import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import {
-  CATEGORIES,
-  PRICING_HINT,
-  PRICING_LABEL,
-  toolSlug,
-  type Pricing,
-  type Tool,
-} from "@/lib/glossary";
+import { findTool, PRICING_HINT, PRICING_LABEL, toolSlug, type Pricing } from "@/lib/glossary";
+import { LIBRARY } from "@/lib/tool-library";
 
 const PRICING_TONE: Record<Pricing, string> = {
   gratis: "border-green-200 bg-green-50 text-green-700",
@@ -22,65 +16,65 @@ const PRICING_TONE: Record<Pricing, string> = {
 const PRICINGS: Pricing[] = ["gratis", "freemium", "pago"];
 
 function normalize(text: string) {
-  // Sem acento e em minúscula: buscar "integracao" acha "integração".
-  // NFD separa a letra do acento; o range ̀-ͯ é o bloco de sinais
-  // diacríticos combinantes, então remove só o acento e preserva a letra.
   return text
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
 }
 
-function ToolCard({ tool }: { tool: Tool }) {
+/* Cada ferramenta da biblioteca é cruzada com o glossário curado: onde existe
+   verba, ganha preço e diferencial; onde não existe, aparece só o nome. Assim a
+   largura das 400 categorias convive com a profundidade das 101 detalhadas. */
+function ToolChip({ name }: { name: string }) {
+  const found = findTool(name);
+
+  if (!found) {
+    return (
+      <span className="rounded-md border border-ink-800 bg-ink-850 px-2 py-0.5 text-[12.5px] text-ink-400">
+        {name}
+      </span>
+    );
+  }
+
   return (
-    <div
-      // Âncora usada pelos links vindos das sugestões de stack do formulário.
-      // scroll-mt compensa a barra superior ao pular para cá.
-      id={`ferramenta-${toolSlug(tool.name)}`}
-      className="scroll-mt-24 rounded-lg border border-ink-800 bg-white p-4 target:border-brand-500/50 target:ring-4 target:ring-brand-500/12"
+    <a
+      href={`#ferramenta-${found.slug}`}
+      title={`${found.tool.what} — ${PRICING_LABEL[found.tool.pricing]}`}
+      className={cn(
+        "rounded-md border px-2 py-0.5 text-[12.5px] font-medium transition-opacity hover:opacity-75",
+        PRICING_TONE[found.tool.pricing],
+      )}
     >
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-sm font-semibold text-ink-100">{tool.name}</h3>
-        <span
-          title={PRICING_HINT[tool.pricing]}
-          className={cn(
-            "shrink-0 rounded-md border px-1.5 py-0.5 text-[11px] font-medium",
-            PRICING_TONE[tool.pricing],
-          )}
-        >
-          {PRICING_LABEL[tool.pricing]}
-        </span>
-      </div>
-
-      <p className="mt-1.5 text-[13px] leading-relaxed text-ink-400">{tool.what}</p>
-
-      <p className="mt-2 border-l-2 border-brand-500/30 pl-3 text-[13px] leading-relaxed text-ink-500">
-        <span className="font-medium text-ink-300">Diferencial: </span>
-        {tool.edge}
-      </p>
-    </div>
+      {name}
+    </a>
   );
 }
 
-export function GlossaryBrowser({ total }: { total: number }) {
+export function GlossaryBrowser({ totalTools }: { totalTools: number }) {
   const [query, setQuery] = useState("");
   const [pricing, setPricing] = useState<Pricing | null>(null);
 
   const filtered = useMemo(() => {
     const q = normalize(query.trim());
 
-    return CATEGORIES.map((category) => ({
-      ...category,
-      tools: category.tools.filter((tool) => {
-        if (pricing && tool.pricing !== pricing) return false;
-        if (!q) return true;
-        // Busca também no nome da categoria: "banco" acha PostgreSQL.
-        const haystack = normalize(
-          `${tool.name} ${tool.what} ${tool.edge} ${category.name} ${category.when}`,
-        );
-        return haystack.includes(q);
-      }),
-    })).filter((category) => category.tools.length > 0);
+    return LIBRARY.map((category) => {
+      const tools = category.tools.filter((tool) => {
+        if (!pricing) return true;
+        // Filtro de preço só consegue julgar o que tem verba no glossário.
+        const found = findTool(tool);
+        return found?.tool.pricing === pricing;
+      });
+
+      if (tools.length === 0) return null;
+      if (!q) return { ...category, tools };
+
+      const haystack = normalize(
+        `${category.name} ${category.does} ${category.when} ${category.tools.join(" ")}`,
+      );
+      if (!haystack.includes(q)) return null;
+
+      return { ...category, tools };
+    }).filter((c): c is NonNullable<typeof c> => c !== null);
   }, [query, pricing]);
 
   const shown = filtered.reduce((n, c) => n + c.tools.length, 0);
@@ -147,12 +141,11 @@ export function GlossaryBrowser({ total }: { total: number }) {
           <span className="ml-auto text-xs text-ink-500">
             {filtrando ? (
               <>
-                <span className="tnum">{shown}</span> de{" "}
-                <span className="tnum">{total}</span>
+                <span className="tnum">{shown}</span> de <span className="tnum">{totalTools}</span>
               </>
             ) : (
               <>
-                <span className="tnum">{total}</span> ferramentas
+                <span className="tnum">{filtered.length}</span> categorias
               </>
             )}
           </span>
@@ -168,22 +161,34 @@ export function GlossaryBrowser({ total }: { total: number }) {
           </p>
         </div>
       ) : (
-        filtered.map((category) => (
-          <section key={category.slug}>
-            <div className="mb-3">
-              <h2 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+        <div className="grid gap-3 xl:grid-cols-2">
+          {filtered.map((category) => (
+            <section
+              key={category.n}
+              id={`categoria-${toolSlug(category.name)}`}
+              className="scroll-mt-24 rounded-xl border border-ink-800 bg-white p-4"
+            >
+              <h3 className="text-sm font-semibold text-ink-100">
+                <span className="tnum mr-1.5 text-ink-600">{category.n}.</span>
                 {category.name}
-              </h2>
-              <p className="mt-1 text-[13px] leading-relaxed text-ink-500">{category.when}</p>
-            </div>
+              </h3>
 
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-              {category.tools.map((tool) => (
-                <ToolCard key={tool.name} tool={tool} />
-              ))}
-            </div>
-          </section>
-        ))
+              <p className="mt-1 text-justify text-[13px] leading-relaxed text-ink-400 hyphens-auto">
+                {category.does}
+              </p>
+              <p className="mt-1.5 text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+                <span className="font-medium text-ink-300">Use quando: </span>
+                {category.when}
+              </p>
+
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {category.tools.map((tool) => (
+                  <ToolChip key={tool} name={tool} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
       )}
     </div>
   );

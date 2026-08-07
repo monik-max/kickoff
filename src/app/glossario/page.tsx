@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 
-import { ALL_TOOLS_COUNT, CATEGORIES, PRICING_HINT, PRICING_LABEL } from "@/lib/glossary";
+import { ALL_TOOLS_COUNT, PRICING_HINT, PRICING_LABEL } from "@/lib/glossary";
+import { LIBRARY, LIBRARY_UNIQUE_TOOLS } from "@/lib/tool-library";
 import { GlossaryBrowser } from "./glossary-browser";
+import { CuratedTools } from "./curated-tools";
 import { LanguageGuide } from "./language-guide";
 
 export const metadata: Metadata = {
@@ -12,14 +14,16 @@ export const metadata: Metadata = {
 
 export default function GlossarioPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       <header>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-100 sm:text-[1.7rem]">
           Glossário de ferramentas
         </h1>
-        <p className="mt-2.5 max-w-[70ch] text-[13.5px] leading-relaxed text-ink-500">
-          {ALL_TOOLS_COUNT} ferramentas em {CATEGORIES.length} categorias, com o que cada uma faz e
-          o que a separa das concorrentes. A ideia não é decorar: é ter onde olhar na hora de
+        <p className="mt-2.5 max-w-[74ch] text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
+          {LIBRARY_UNIQUE_TOOLS.toLocaleString("pt-BR")} ferramentas em {LIBRARY.length} categorias,
+          organizadas por necessidade. Cada categoria diz o que resolve e em que situação você
+          precisa dela. Destas, {ALL_TOOLS_COUNT} têm verba detalhada mais abaixo, com o que fazem,
+          o diferencial e a faixa de preço. A ideia não é decorar: é ter onde olhar na hora de
           escolher.
         </p>
 
@@ -40,10 +44,24 @@ export default function GlossarioPage() {
       <LanguageGuide />
 
       <section>
-        <h2 className="mb-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
-          Catálogo de ferramentas
+        <h2 className="mb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+          Biblioteca por necessidade
         </h2>
-        <GlossaryBrowser total={ALL_TOOLS_COUNT} />
+        <p className="mb-4 max-w-[74ch] text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+          As {LIBRARY.length} categorias. Ferramentas coloridas têm verba detalhada — clique para
+          ir até ela.
+        </p>
+        <GlossaryBrowser totalTools={LIBRARY_UNIQUE_TOOLS} />
+      </section>
+
+      <section>
+        <h2 className="mb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+          Ferramentas em detalhe
+        </h2>
+        <p className="mb-4 max-w-[74ch] text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+          As {ALL_TOOLS_COUNT} com descrição, diferencial e preço.
+        </p>
+        <CuratedTools />
       </section>
     </div>
   );
