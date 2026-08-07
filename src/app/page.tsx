@@ -23,11 +23,18 @@ export default async function Home() {
           estreita (rótulos quebram em duas linhas) para sobrar largura ao h1,
           que assim cabe em uma linha só. */}
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-        <section>
+        {/* w-fit encolhe a seção até a largura natural do h1 (que cabe em uma
+            linha no desktop), e o parágrafo justifica dentro dessa largura em
+            vez de ir até a borda da coluna. O `w-0 min-w-full` do <p> é o que
+            faz isso funcionar: sem ele o parágrafo entraria no cálculo de
+            fit-content com o texto todo numa linha e esticaria a seção de volta
+            para a coluna inteira. No mobile o h1 não cabe numa linha, o
+            fit-content satura na largura disponível e tudo volta ao normal. */}
+        <section className="lg:w-fit">
           <h1 className="text-2xl font-semibold tracking-tight text-ink-100 sm:text-[1.7rem]">
             Descreva o projeto. Receba o plano de execução.
           </h1>
-          <p className="mt-2.5 text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
+          <p className="mt-2.5 w-0 min-w-full text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
             O Kickoff transforma a descrição de um projeto de software em épicos, tarefas estimadas
             em três pontos, riscos com mitigação, marcos e uma faixa de prazo baseada na capacidade
             real do time. Depois é tudo editável — o plano é o começo da conversa, não o fim.
