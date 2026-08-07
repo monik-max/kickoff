@@ -31,6 +31,14 @@ export const TaskSchema = z.object({
 export const EpicSchema = z.object({
   title: z.string().describe("Nome do épico / frente de trabalho"),
   summary: z.string().describe("Uma frase explicando o objetivo do épico"),
+  rationale: z
+    .string()
+    .describe(
+      "Por que este épico existe e o que dá errado quando ele é deixado para depois. " +
+        "Duas frases no máximo. Concreto e consequencial: descreva o custo real de pular " +
+        "esta frente, não a importância genérica dela. Isto ensina o leitor, então não " +
+        "repita o resumo com outras palavras.",
+    ),
   tasks: z.array(TaskSchema).describe("Tarefas do épico, em ordem de execução"),
 });
 

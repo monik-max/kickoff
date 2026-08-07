@@ -12,6 +12,12 @@ type Block = {
   triggers: RegExp;
   title: string;
   summary: string;
+  /**
+   * Por que a frente existe e o que custa deixá-la para depois. É a camada de
+   * ensino do plano: o resumo diz o que fazer, isto diz por quê — o tipo de
+   * coisa que normalmente só se aprende errando.
+   */
+  rationale: string;
   tasks: PlanTask[];
   risks?: Plan["risks"];
 };
@@ -39,6 +45,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /login|autentica|usuári|conta|cadastro|permiss|perfil|acesso/i,
     title: "Contas e permissões",
     summary: "Cadastro, login e controle de acesso por papel.",
+    rationale: "Quem pode ver o quê muda o desenho da interface, não só do backend. Descobrir a regra de permissão depois das telas prontas obriga a refazer navegação inteira.",
     tasks: [
       t("Modelar usuários, papéis e permissões", "Definir as entidades e a matriz de permissão por papel antes de escrever qualquer tela.", "backend", "alta", 4, 8, 16),
       t("Implementar cadastro e login", "Fluxo de e-mail e senha com hash, sessão e recuperação de senha.", "backend", "alta", 8, 16, 32),
@@ -60,6 +67,7 @@ const OPTIONAL_BLOCKS: Block[] = [
       /pagamento|cobran|checkout|financeiro|fatura|billing|pix|cart(ão|ao) de cr[eé]dito|assinatura de plano|plano de assinatura|recorr[eê]nc/i,
     title: "Pagamentos e cobrança",
     summary: "Integração com gateway, ciclo de cobrança e conciliação.",
+    rationale: "Dinheiro é a única parte do sistema em que um bug vira prejuízo direto e ligação de cliente. Conciliação entre o que o gateway registrou e o que seu banco acha que aconteceu precisa existir desde o primeiro dia.",
     tasks: [
       t("Escolher gateway e mapear os fluxos de dinheiro", "Comparar taxas, meios de pagamento e suporte a estorno. Documentar cada estado possível de uma cobrança.", "produto", "alta", 6, 12, 24),
       t("Integrar checkout", "Fluxo de pagamento fim a fim no ambiente de sandbox.", "backend", "alta", 12, 24, 48),
@@ -80,6 +88,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /integra|api externa|erp|crm|webhook|sincroniz|importa|planilha|legado/i,
     title: "Integrações e migração de dados",
     summary: "Conectar com os sistemas que já existem e trazer os dados atuais.",
+    rationale: "Dado legado quase sempre está mais sujo do que parece: campo vazio, duplicado, formato trocado. Descobrir isso na véspera do lançamento trava a entrega, porque limpar dado não se acelera com mais gente.",
     tasks: [
       t("Levantar contratos das APIs externas", "Documentação, limites de taxa, autenticação e ambiente de teste de cada sistema.", "backend", "alta", 6, 12, 24),
       t("Camada de integração com retry e fila", "Chamadas externas falham. Isolar em uma camada com retry, timeout e dead-letter.", "backend", "alta", 12, 24, 48),
@@ -99,6 +108,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /dashboard|relatóri|métric|indicador|gráfico|bi|analytics|painel/i,
     title: "Relatórios e indicadores",
     summary: "Consultas, agregações e visualizações para decisão.",
+    rationale: "Relatório é o que o gestor usa para justificar o projeto ter existido. Se depender de consulta pesada sobre a base de produção, ele nasce lento e vai piorando conforme os dados crescem.",
     tasks: [
       t("Definir os indicadores que importam", "Cada gráfico precisa responder a uma pergunta de negócio específica.", "produto", "alta", 4, 8, 16),
       t("Modelar as consultas agregadas", "Agregações no banco, com índices adequados ao volume esperado.", "dados", "alta", 8, 16, 32),
@@ -110,6 +120,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /ia|inteligência artificial|llm|gpt|claude|machine learning|modelo|embedding|rag/i,
     title: "Camada de IA",
     summary: "Integração com modelo, avaliação de qualidade e controle de custo.",
+    rationale: "Modelo de IA não dá resposta previsível como uma função comum: a mesma entrada pode variar. Sem medir qualidade e custo por requisição desde cedo, você só descobre que ficou caro ou ruim quando já está em produção.",
     tasks: [
       t("Prototipar os prompts com casos reais", "Antes de escrever produto, validar que o modelo resolve o problema em 10 casos reais.", "produto", "alta", 8, 16, 32),
       t("Integrar o modelo com saída estruturada", "Schema de saída, validação e tratamento de resposta inválida.", "backend", "alta", 8, 16, 32),
@@ -136,6 +147,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /mobile|app|android|ios|celular|offline|pwa/i,
     title: "Experiência mobile",
     summary: "Uso em tela pequena, com rede instável.",
+    rationale: "Mobile não é a mesma tela menor: é rede que cai, bateria acabando e uso com uma mão só, em movimento. Adaptar no fim significa refazer fluxo, não ajustar CSS.",
     tasks: [
       t("Definir a estratégia mobile", "App nativo, híbrido ou PWA — decidir com base em uso offline, notificação e acesso a hardware.", "produto", "alta", 4, 8, 16),
       t("Adaptar a interface para tela pequena", "Não é encolher o desktop: revisar navegação, toque e densidade.", "frontend", "alta", 12, 24, 40),
@@ -147,6 +159,7 @@ const OPTIONAL_BLOCKS: Block[] = [
     triggers: /notifica|e-?mail|alerta|mensagem|whatsapp|sms|push/i,
     title: "Notificações",
     summary: "Avisar a pessoa certa, no canal certo, sem virar spam.",
+    rationale: "Notificação mal calibrada é desinstalada ou silenciada, e aí você perde também as importantes. A regra de quem recebe o quê e com que frequência é decisão de produto, não detalhe técnico.",
     tasks: [
       t("Mapear eventos que geram notificação", "Quem recebe o quê, em qual canal e com qual urgência.", "produto", "media", 3, 6, 12),
       t("Serviço de envio com fila", "Envio assíncrono, retry e registro de entrega.", "backend", "media", 8, 16, 32),
@@ -161,6 +174,7 @@ function baseBlocks(input: PlanInput): Block[] {
       triggers: /.^/,
       title: "Descoberta e alinhamento",
       summary: "Fechar escopo, critérios de aceite e o que fica de fora.",
+      rationale: "Escopo que não foi escrito volta como discussão no meio da execução, quando mudar já custa caro. Registrar o que fica de fora evita mais retrabalho do que listar o que fica dentro.",
       tasks: [
         t("Entrevistar quem vai usar o sistema", "Três a cinco conversas com usuários reais. O que dói hoje e como resolvem no improviso.", "produto", "alta", 6, 12, 20),
         t("Escrever os critérios de aceite do MVP", "Lista verificável do que precisa funcionar para o projeto ser considerado entregue.", "produto", "alta", 4, 8, 16),
@@ -172,6 +186,7 @@ function baseBlocks(input: PlanInput): Block[] {
       triggers: /.^/,
       title: "Fundação técnica",
       summary: "Repositório, ambientes e o caminho até produção — antes da primeira feature.",
+      rationale: "Deploy deixado para o fim é o erro mais caro do projeto. Quando o ambiente falha, já existem features prontas paradas esperando, e você conserta infraestrutura sob pressão de prazo.",
       tasks: [
         t("Configurar repositório e padrões de código", "Lint, formatação, convenção de commit e revisão obrigatória.", "devops", "alta", 3, 6, 12),
         t("Modelar o banco de dados", "Entidades, relacionamentos e migrações versionadas.", "backend", "alta", 6, 12, 24),
@@ -184,6 +199,7 @@ function baseBlocks(input: PlanInput): Block[] {
       triggers: /.^/,
       title: "Núcleo do produto",
       summary: "As funcionalidades que justificam o projeto existir.",
+      rationale: "É a única frente que o usuário percebe diretamente. Vem depois da fundação de propósito: construir sobre base instável significa refazer isto mais tarde.",
       tasks: [
         t("Implementar o fluxo principal de ponta a ponta", "Uma fatia vertical completa: interface, servidor e banco funcionando juntos.", "backend", "alta", 16, 32, 64),
         t("Construir as telas do fluxo principal", "Incluindo estados de carregamento, erro e lista vazia.", "frontend", "alta", 16, 32, 56),
@@ -196,6 +212,7 @@ function baseBlocks(input: PlanInput): Block[] {
       triggers: /.^/,
       title: "Qualidade e endurecimento",
       summary: "Testes, desempenho e segurança antes de abrir para usuários.",
+      rationale: "Bug encontrado em produção custa muito mais do que em teste, porque envolve usuário real, dado real e correção às pressas. Segurança tratada no fim vira remendo em cima de decisão já tomada.",
       tasks: [
         t("Testes automatizados do caminho crítico", "Cobrir os fluxos que, se quebrarem, param o negócio.", "qa", "alta", 12, 24, 40),
         t("Teste de carga no volume esperado", "Descobrir o limite antes que o usuário descubra.", "qa", "media", 6, 12, 24),
@@ -207,6 +224,7 @@ function baseBlocks(input: PlanInput): Block[] {
       triggers: /.^/,
       title: "Lançamento e transferência",
       summary: "Colocar em produção e deixar o time operando sem depender de quem construiu.",
+      rationale: "Projeto que só funciona com quem o escreveu por perto não terminou. Documentação e handover são o que separa entrega de dependência permanente.",
       tasks: [
         t("Preparar ambiente de produção", "Infraestrutura, backup, restauração testada e plano de retorno.", "devops", "alta", 6, 12, 24),
         t("Lançamento controlado", "Grupo pequeno de usuários primeiro, com acompanhamento de perto.", "produto", "alta", 4, 8, 16),
@@ -249,6 +267,7 @@ export function buildHeuristicPlan(input: PlanInput): Plan {
   const epics = ordered.map((block) => ({
     title: block.title,
     summary: block.summary,
+    rationale: block.rationale,
     tasks: block.tasks,
   }));
 

@@ -86,6 +86,7 @@ export async function createProject(
       projectId,
       title: epic.title,
       summary: epic.summary,
+      rationale: epic.rationale,
       orderIndex: epicIndex,
     });
 

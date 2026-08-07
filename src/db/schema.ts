@@ -24,11 +24,14 @@ export const projects = pgTable("projects", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+/* `rationale` explica por que a frente existe e o que custa deixá-la para
+   depois. Nulo nos épicos criados antes desta coluna existir. */
 export const epics = pgTable("epics", {
   id: text("id").primaryKey(),
   projectId: text("project_id").notNull(),
   title: text("title").notNull(),
   summary: text("summary"),
+  rationale: text("rationale"),
   orderIndex: integer("order_index").notNull().default(0),
 });
 

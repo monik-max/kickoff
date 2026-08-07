@@ -55,6 +55,7 @@ const BOOTSTRAP = [
     project_id TEXT NOT NULL,
     title TEXT NOT NULL,
     summary TEXT,
+    rationale TEXT,
     order_index INTEGER NOT NULL DEFAULT 0
   )`,
   sql`
@@ -99,6 +100,10 @@ const BOOTSTRAP = [
   )`,
   sql`CREATE INDEX IF NOT EXISTS tasks_project_idx ON tasks (project_id)`,
   sql`CREATE INDEX IF NOT EXISTS epics_project_idx ON epics (project_id)`,
+  /* Coluna adicionada depois que já havia dados em produção. O CREATE TABLE
+     acima é IF NOT EXISTS, então não roda de novo em banco existente — o ALTER
+     é o que aplica a mudança lá. Idempotente: pode rodar a cada boot. */
+  sql`ALTER TABLE epics ADD COLUMN IF NOT EXISTS rationale TEXT`,
 ];
 
 // O dev server do Next recarrega módulos a cada edição; sem o singleton global

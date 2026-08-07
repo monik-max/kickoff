@@ -28,6 +28,10 @@ Regras do plano:
 - As três estimativas (otimista, provável, pessimista) são em horas de trabalho efetivo
   de uma pessoa, não em dias de calendário. A pessimista deve ser genuinamente pessimista:
   para trabalho com incerteza real, costuma ser 2 a 3 vezes a provável.
+- Cada épico tem um "rationale": por que aquela frente existe e o que dá errado
+  quando ela é deixada para depois. Quem lê este plano está aprendendo a profissão,
+  então diga o custo concreto de pular a frente — não a importância genérica dela.
+  Não repita o resumo com outras palavras.
 - Os marcos são entregas verificáveis, não fases abstratas. Diga o que estará funcionando.
 - Os riscos devem ser específicos deste projeto. Nada de "prazo apertado" genérico.
 - Em premissas, registre o que você assumiu por falta de informação. Em perguntas,

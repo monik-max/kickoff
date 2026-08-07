@@ -260,6 +260,14 @@ export function TaskBoard({
                   {epic.title}
                 </h3>
                 <p className="mt-1 text-sm text-ink-400">{epic.summary}</p>
+                {/* Camada de ensino: o resumo diz o que fazer, isto diz por quê.
+                    Nulo nos épicos gerados antes desta coluna existir. */}
+                {epic.rationale ? (
+                  <p className="mt-2 border-l-2 border-brand-500/30 pl-3 text-[13px] leading-relaxed text-ink-500">
+                    <span className="font-medium text-ink-300">Por quê: </span>
+                    {epic.rationale}
+                  </p>
+                ) : null}
               </div>
               <div className="flex shrink-0 items-center gap-3 text-xs text-ink-400">
                 <span className="tnum">
