@@ -18,10 +18,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
 
-        <footer className="border-t border-ink-800/80 py-6">
-          <div className="mx-auto w-full max-w-6xl px-6 text-center text-xs text-ink-500">
-            Estimativas em três pontos (PERT). O prazo é uma faixa de confiança,
-            não uma promessa.
+        <footer className="border-t border-ink-800/80 py-8">
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-3 px-6">
+            <img src="/kickoff-logo.svg" alt="Kickoff" className="h-7" />
+            <p className="text-center text-xs text-ink-500">
+              Estimativas em três pontos (PERT). O prazo é uma faixa de
+              confiança, não uma promessa.
+            </p>
           </div>
         </footer>
       </body>
