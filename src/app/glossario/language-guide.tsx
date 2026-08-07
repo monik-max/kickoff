@@ -11,7 +11,7 @@ export function LanguageGuide() {
       <h2 className="mb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
         Qual linguagem, para qual objetivo
       </h2>
-      <p className="mb-4 max-w-[74ch] text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+      <p className="mb-4 text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
         A linguagem importa menos do que parece: lógica, banco de dados e saber decompor problema
         são o que transferem entre todas elas. A segunda linguagem se aprende em semanas. Escolha
         uma que caiba no seu objetivo e comece.
@@ -32,12 +32,15 @@ export function LanguageGuide() {
               {pick.mainWhy}
             </p>
 
+            {/* Cada alternativa em seu próprio parágrafo. Corridas na mesma
+                linha, viravam parede de texto: não dava para varrer a lista e
+                achar a linguagem que interessa. */}
             {pick.others.length > 0 ? (
-              <dl className="mt-2 border-t border-ink-800 pt-2 text-justify text-[12.5px] leading-relaxed hyphens-auto">
+              <dl className="mt-2 space-y-1.5 border-t border-ink-800 pt-2 text-[12.5px] leading-relaxed">
                 {pick.others.map((alt) => (
-                  <div key={alt.lang} className="inline">
+                  <div key={alt.lang}>
                     <dt className="inline font-medium text-ink-200">{alt.lang} — </dt>
-                    <dd className="mr-1.5 inline text-ink-500">{alt.why}</dd>
+                    <dd className="inline text-justify text-ink-500 hyphens-auto">{alt.why}</dd>
                   </div>
                 ))}
               </dl>

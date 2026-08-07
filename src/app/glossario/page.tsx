@@ -19,7 +19,7 @@ export default function GlossarioPage() {
         <h1 className="text-2xl font-semibold tracking-tight text-ink-100 sm:text-[1.7rem]">
           Glossário de ferramentas
         </h1>
-        <p className="mt-2.5 max-w-[74ch] text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
+        <p className="mt-2.5 text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
           {LIBRARY_UNIQUE_TOOLS.toLocaleString("pt-BR")} ferramentas em {LIBRARY.length} categorias,
           organizadas por necessidade. Cada categoria diz o que resolve e em que situação você
           precisa dela. Destas, {ALL_TOOLS_COUNT} têm verba detalhada mais abaixo, com o que fazem,
@@ -49,7 +49,7 @@ export default function GlossarioPage() {
         <h2 className="mb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
           Biblioteca por necessidade
         </h2>
-        <p className="mb-4 max-w-[74ch] text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+        <p className="mb-4 text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
           As {LIBRARY.length} categorias. Ferramentas coloridas têm verba detalhada — clique para
           ir até ela.
         </p>
@@ -60,7 +60,7 @@ export default function GlossarioPage() {
         <h2 className="mb-1 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
           Ferramentas em detalhe
         </h2>
-        <p className="mb-4 max-w-[74ch] text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
+        <p className="mb-4 text-justify text-[13px] leading-relaxed text-ink-500 hyphens-auto">
           As {ALL_TOOLS_COUNT} com descrição, diferencial e preço.
         </p>
         <CuratedTools />
