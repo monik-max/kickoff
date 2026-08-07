@@ -19,30 +19,30 @@ export default async function Home() {
   const projects = await listProjects();
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Hero à esquerda, faixa de destaques à direita */}
-      <div className="grid items-start gap-6 lg:grid-cols-[1fr_auto]">
+    <div className="flex flex-col gap-5">
+      {/* Hero à esquerda, faixa de destaques à direita. A faixa é mantida
+          estreita (rótulos quebram em duas linhas) para sobrar largura ao h1,
+          que assim cabe em uma linha só. */}
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
         <section>
-          <h1 className="text-2xl font-semibold tracking-tight text-ink-100 sm:text-[1.75rem]">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink-100 sm:text-[1.7rem]">
             Descreva o projeto. Receba o plano de execução.
           </h1>
-          <p className="mt-3 max-w-[58ch] text-[13.5px] leading-relaxed text-ink-500">
+          <p className="mt-2.5 max-w-[62ch] text-justify text-[13.5px] leading-relaxed text-ink-500 hyphens-auto">
             O Kickoff transforma a descrição de um projeto de software em épicos, tarefas estimadas
             em três pontos, riscos com mitigação, marcos e uma faixa de prazo baseada na capacidade
             real do time. Depois é tudo editável — o plano é o começo da conversa, não o fim.
           </p>
         </section>
 
-        <div className="rounded-xl border border-ink-800 bg-white p-4">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 xl:grid-cols-4">
+        <div className="rounded-xl border border-ink-800 bg-white px-4 py-3.5">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 xl:grid-cols-4">
             {highlights.map(({ icon: Icon, label, tone }) => (
               <div key={label} className="flex items-center gap-2.5">
                 <span className={`grid size-9 shrink-0 place-items-center rounded-full ${tone}`}>
                   <Icon className="size-4" aria-hidden />
                 </span>
-                <span className="max-w-[9rem] text-[13px] font-medium leading-snug text-ink-200">
-                  {label}
-                </span>
+                <span className="text-[12.5px] font-medium leading-snug text-ink-200">{label}</span>
               </div>
             ))}
           </div>
