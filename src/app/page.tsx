@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ListTree,
   CheckCircle2,
-  LayoutTemplate,
   Lightbulb,
   Shield,
   Zap,
@@ -69,23 +68,12 @@ type SidebarItem = {
   tone?: Tone;
 };
 
-function SidebarSection({
-  icon: Icon,
-  title,
-  items,
-}: {
-  icon: any;
-  title: string;
-  items: SidebarItem[];
-}) {
+function SidebarSection({ title, items }: { title: string; items: SidebarItem[] }) {
   return (
     <div>
-      <div className="mb-4 flex items-center gap-2">
-        <Icon className="size-4 text-brand-400" aria-hidden />
-        <h3 className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-300">
-          {title}
-        </h3>
-      </div>
+      <h3 className="mb-4 text-center text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+        {title}
+      </h3>
       <div className="space-y-3.5">
         {items.map((item, idx) => {
           const ItemIcon = item.icon ?? CheckCircle2;
@@ -163,7 +151,6 @@ export default async function Home() {
         <aside className="space-y-4 lg:sticky lg:top-8 lg:self-start">
           <Card className="p-5">
             <SidebarSection
-              icon={CheckCircle2}
               title="O que você vai receber"
               items={[
                 {
@@ -188,7 +175,6 @@ export default async function Home() {
 
           <Card className="p-5">
             <SidebarSection
-              icon={LayoutTemplate}
               title="Prévia do plano"
               items={[
                 {
@@ -227,7 +213,6 @@ export default async function Home() {
 
           <Card className="p-5">
             <SidebarSection
-              icon={Lightbulb}
               title="Dicas para um ótimo plano"
               items={[
                 {
@@ -260,7 +245,6 @@ export default async function Home() {
 
           <Card className="p-5">
             <SidebarSection
-              icon={Shield}
               title="Seguro e confiável"
               items={[
                 {

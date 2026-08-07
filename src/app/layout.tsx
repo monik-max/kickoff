@@ -19,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
 
         <footer className="border-t border-ink-800/80 py-6">
-          <div className="mx-auto w-full max-w-6xl px-6 text-xs text-ink-400">
+          <div className="mx-auto w-full max-w-6xl px-6 text-center text-xs text-ink-500">
             Estimativas em três pontos (PERT). O prazo é uma faixa de confiança,
             não uma promessa.
           </div>
