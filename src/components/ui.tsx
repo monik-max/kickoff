@@ -121,13 +121,13 @@ export function Stat({
 }
 
 const roleTones: Record<string, string> = {
-  produto: "border-brand-500/30 bg-brand-500/10 text-brand-300",
-  design: "border-pink-400/25 bg-pink-400/10 text-pink-300",
-  frontend: "border-sky-400/25 bg-sky-400/10 text-sky-300",
-  backend: "border-emerald-400/25 bg-emerald-400/10 text-emerald-300",
-  dados: "border-violet-400/25 bg-violet-400/10 text-violet-300",
-  devops: "border-orange-400/25 bg-orange-400/10 text-orange-300",
-  qa: "border-teal-400/25 bg-teal-400/10 text-teal-300",
+  produto: "border-violet-200 bg-violet-50 text-violet-700",
+  design: "border-pink-200 bg-pink-50 text-pink-700",
+  frontend: "border-sky-200 bg-sky-50 text-sky-700",
+  backend: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  dados: "border-violet-200 bg-violet-50 text-violet-700",
+  devops: "border-orange-200 bg-orange-50 text-orange-700",
+  qa: "border-teal-200 bg-teal-50 text-teal-700",
 };
 
 const roleDescriptions: Record<string, string> = {

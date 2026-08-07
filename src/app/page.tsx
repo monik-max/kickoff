@@ -17,17 +17,33 @@ function FeatureCard({ title, description }: { title: string; description: strin
   );
 }
 
+/* Pares fg/bg calibrados para fundo claro: texto -600/-700 sobre chip -50/-100. */
+const tones = {
+  brand: "text-brand-400 bg-violet-100",
+  blue: "text-blue-600 bg-blue-100",
+  purple: "text-purple-600 bg-purple-100",
+  pink: "text-pink-600 bg-pink-100",
+  indigo: "text-indigo-600 bg-indigo-100",
+  cyan: "text-cyan-700 bg-cyan-100",
+  amber: "text-amber-600 bg-amber-100",
+  green: "text-green-600 bg-green-100",
+  orange: "text-orange-600 bg-orange-100",
+  lime: "text-lime-700 bg-lime-100",
+} as const;
+
+type Tone = keyof typeof tones;
+
 type SidebarItem = {
   label: string;
   icon?: any;
-  color?: string;
+  tone?: Tone;
 };
 
 function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string; items: Array<string | SidebarItem> }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <Icon className="size-5 text-brand-300" aria-hidden />
+        <Icon className="size-5 text-brand-400" aria-hidden />
         <h3 className="font-semibold text-ink-100 text-sm uppercase tracking-wide">{title}</h3>
       </div>
       <div className="space-y-4">
@@ -35,12 +51,12 @@ function SidebarSection({ icon: Icon, title, items }: { icon: any; title: string
           const isObject = typeof item === "object";
           const label = isObject ? item.label : item;
           const ItemIcon = isObject && item.icon ? item.icon : CheckCircle2;
-          const color = isObject && item.color ? item.color : "text-brand-300";
+          const tone = tones[(isObject && item.tone) || "brand"];
 
           return (
             <div key={idx} className="flex items-start gap-3">
-              <div className={`rounded-full p-2.5 ${color.replace("text-", "bg-").replace("-300", "-300/35")} mt-0.5 shrink-0`}>
-                <ItemIcon className={`size-5 ${color}`} aria-hidden />
+              <div className={`rounded-full p-2.5 mt-0.5 shrink-0 ${tone}`}>
+                <ItemIcon className="size-5" aria-hidden />
               </div>
               <p className="text-xs text-ink-300 leading-relaxed pt-0.5">{label}</p>
             </div>
@@ -121,11 +137,11 @@ export default async function Home() {
               icon={LayoutTemplate}
               title="Prévia do plano"
               items={[
-                { label: "Épicos e Features", icon: GitBranch, color: "text-blue-400" },
-                { label: "Tarefas por Sprint", icon: CheckSquare, color: "text-purple-400" },
-                { label: "Estimativas e Dependências", icon: Zap, color: "text-pink-400" },
-                { label: "Marcos e Prazos", icon: Flag, color: "text-indigo-400" },
-                { label: "Plano Final", icon: CheckCircle2, color: "text-cyan-400" },
+                { label: "Épicos e Features", icon: GitBranch, tone: "blue" as const },
+                { label: "Tarefas por Sprint", icon: CheckSquare, tone: "purple" as const },
+                { label: "Estimativas e Dependências", icon: Zap, tone: "pink" as const },
+                { label: "Marcos e Prazos", icon: Flag, tone: "indigo" as const },
+                { label: "Plano Final", icon: CheckCircle2, tone: "cyan" as const },
               ]}
             />
           </Card>
@@ -135,10 +151,10 @@ export default async function Home() {
               icon={Lightbulb}
               title="Dicas para um ótimo plano"
               items={[
-                { label: "Seja claro no problema", icon: Lightbulb, color: "text-yellow-400" },
-                { label: "Descreva o que já existe", icon: CheckSquare, color: "text-green-400" },
-                { label: "Informe restrições e prazos", icon: Clock, color: "text-orange-400" },
-                { label: "Revise e ajuste depois", icon: CheckCircle2, color: "text-lime-400" },
+                { label: "Seja claro no problema", icon: Lightbulb, tone: "amber" as const },
+                { label: "Descreva o que já existe", icon: CheckSquare, tone: "green" as const },
+                { label: "Informe restrições e prazos", icon: Clock, tone: "orange" as const },
+                { label: "Revise e ajuste depois", icon: CheckCircle2, tone: "lime" as const },
               ]}
             />
           </Card>
@@ -148,8 +164,8 @@ export default async function Home() {
               icon={Shield}
               title="Seguro e confiável"
               items={[
-                { label: "Seus dados são protegidos", icon: Lock, color: "text-blue-400" },
-                { label: "Não compartilhamos informações", icon: Shield, color: "text-indigo-400" },
+                { label: "Seus dados são protegidos", icon: Lock, tone: "blue" as const },
+                { label: "Não compartilhamos informações", icon: Shield, tone: "indigo" as const },
               ]}
             />
           </Card>
