@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AlertTriangle, ArrowLeft, Flag, HelpCircle } from "lucide-react";
 
 import { TaskBoard } from "@/components/task-board";
+import { ToolRecommendations } from "@/components/tool-recommendations";
 import {
   CapacityControls,
   DeleteProjectButton,
@@ -142,6 +143,8 @@ export default async function ProjectPage({
           O esforço soma a estimativa PERT de cada tarefa ainda não concluída. A faixa de 85% adiciona 1,04 desvio-padrão — é o número que você leva para a reunião, não o esperado.
         </p>
       </section>
+
+      <ToolRecommendations description={project.description} />
 
       <section>
         <SectionTitle hint={`${epics.length} épicos · ${allTasks.length} tarefas`}>
