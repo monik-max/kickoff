@@ -36,11 +36,34 @@
 
 body {
   background:
-    radial-gradient(
-      ellipse 80% 50% at 50% -10%,
-      rgba(91, 69, 232, 0.14),
-      transparent
+    /* Grid pattern */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 49px,
+      rgba(91, 69, 232, 0.03) 49px,
+      rgba(91, 69, 232, 0.03) 50px
     ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 49px,
+      rgba(91, 69, 232, 0.03) 49px,
+      rgba(91, 69, 232, 0.03) 50px
+    ),
+    /* Radial gradient - top left */
+    radial-gradient(
+      ellipse 60% 80% at 20% 10%,
+      rgba(91, 69, 232, 0.25),
+      transparent 50%
+    ),
+    /* Radial gradient - bottom right */
+    radial-gradient(
+      ellipse 60% 60% at 80% 90%,
+      rgba(91, 69, 232, 0.15),
+      transparent 50%
+    ),
+    /* Base color */
     var(--color-ink-950);
   color: var(--color-ink-100);
   -webkit-font-smoothing: antialiased;
