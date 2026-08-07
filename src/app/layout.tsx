@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -10,36 +11,51 @@ export const metadata: Metadata = {
   },
 };
 
-/* Barra superior decorativa. Os itens NÃO são links: as rotas /modelos,
-   /planos e o login ainda não existem, e navegação que leva a 404 é pior que
-   navegação ausente. Vira <nav> de verdade quando essas telas existirem. */
-function TopBar() {
-  const items = ["Novo projeto", "Meus projetos", "Modelos", "Planos"];
+/* Itens com `href` são links de verdade; os sem href são placeholders visuais,
+   porque essas rotas ainda não existem e navegação que leva a 404 é pior que
+   navegação ausente. Eles ficam apagados e marcados como "em breve" para não
+   prometer o que não entrega. */
+const NAV = [
+  { label: "Novo projeto", href: "/" },
+  { label: "Glossário", href: "/glossario" },
+  { label: "Meus projetos", href: null },
+  { label: "Modelos", href: null },
+  { label: "Planos", href: null },
+];
 
+function TopBar() {
   return (
     <div className="border-b border-ink-800 bg-white">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-8 px-6 py-3">
         {/* next/image não ajuda aqui: o logo é um SVG estático de ~700 bytes,
             que não se beneficia de redimensionamento nem de conversão de
             formato, e serví-lo pelo next/image exigiria dangerouslyAllowSVG. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/kickoff-logo.svg" alt="Kickoff" className="h-8 shrink-0" />
+        <Link href="/" className="shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/kickoff-logo.svg" alt="Kickoff" className="h-8" />
+        </Link>
 
-        <div className="hidden items-center gap-7 md:flex">
-          {items.map((label, i) => (
-            <span
-              key={label}
-              title="Ainda não disponível"
-              className={
-                i === 0
-                  ? "border-b-2 border-brand-500 py-3 text-sm font-medium text-brand-400"
-                  : "py-3 text-sm text-ink-500"
-              }
-            >
-              {label}
-            </span>
-          ))}
-        </div>
+        <nav className="hidden items-center gap-7 md:flex">
+          {NAV.map((item) =>
+            item.href ? (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="py-3 text-sm font-medium text-ink-200 transition-colors hover:text-brand-400"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <span
+                key={item.label}
+                title="Em breve"
+                className="py-3 text-sm text-ink-600"
+              >
+                {item.label}
+              </span>
+            ),
+          )}
+        </nav>
 
         <div className="ml-auto flex items-center gap-4">
           <span className="hidden text-sm text-ink-500 lg:inline" title="Ainda não disponível">
