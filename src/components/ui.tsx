@@ -61,15 +61,24 @@ export function Button({
 export function Field({
   label,
   hint,
+  required,
   children,
 }: {
   label: string;
   hint?: string;
+  required?: boolean;
   children: ReactNode;
 }) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-ink-200">{label}</span>
+      <span className="text-sm font-medium text-ink-200">
+        {label}
+        {required ? (
+          <span className="ml-0.5 text-stop-400" aria-hidden>
+            *
+          </span>
+        ) : null}
+      </span>
       {children}
       {hint ? <span className="text-xs text-ink-500">{hint}</span> : null}
     </label>

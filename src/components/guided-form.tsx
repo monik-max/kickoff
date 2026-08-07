@@ -1,11 +1,19 @@
 "use client";
 
-import { useActionState, useRef, useState, useEffect, type ReactNode } from "react";
+import {
+  useActionState,
+  useRef,
+  useState,
+  useEffect,
+  type ReactNode,
+  type ComponentProps,
+} from "react";
+import { flushSync } from "react-dom";
 import { useFormStatus } from "react-dom";
-import { ChevronDown, Loader2, Sparkles } from "lucide-react";
+import { ChevronDown, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-react";
 
 import { createProject, type FormState } from "@/app/actions";
-import { Button, Card, Field, Input } from "@/components/ui";
+import { Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { suggestStackFromScope, suggestIntegrationsFromScope, type StackItem } from "@/lib/suggestions";
 
@@ -34,36 +42,89 @@ function buildDescription(data: Record<string, any>): string {
   return parts.join("\n\n");
 }
 
-/* Seção numerada. O número dá wayfinding num formulário de 6 blocos — sem ele
-   o usuário perde a noção de onde está durante o scroll. Separação por régua
-   em vez de borda: evita empilhar superfícies dentro do Card. */
+/* Seções coladas dentro de um único card, separadas por régua de ponta a ponta.
+   As colapsáveis mantêm o conteúdo MONTADO e apenas escondido: desmontar tiraria
+   teamSize/weeklyHours do FormData e a server action receberia null. */
 function Section({
   step,
   title,
+  collapsible,
+  open,
+  onToggle,
   children,
 }: {
   step: number;
   title: string;
+  collapsible?: boolean;
+  open?: boolean;
+  onToggle?: () => void;
   children: ReactNode;
 }) {
+  const heading = (
+    <>
+      <span className="tnum grid size-6 shrink-0 place-items-center rounded-full bg-brand-500/10 text-[11px] font-semibold text-brand-400">
+        {step}
+      </span>
+      <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+        {title}
+      </h3>
+    </>
+  );
+
   return (
-    <section className="border-t border-ink-800 pt-7 first:border-t-0 first:pt-0">
-      <div className="mb-4 flex items-center gap-2.5">
-        <span className="tnum grid size-6 shrink-0 place-items-center rounded-full bg-brand-500/10 text-[11px] font-semibold text-brand-400">
-          {step}
-        </span>
-        <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
-          {title}
-        </h3>
-      </div>
-      {children}
+    <section data-section={step} className="border-b border-ink-800">
+      {collapsible ? (
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          className="flex w-full items-center gap-2.5 px-6 py-4 text-left transition-colors hover:bg-ink-900"
+        >
+          {heading}
+          <ChevronDown
+            className={cn(
+              "ml-auto size-4 shrink-0 text-ink-500 transition-transform duration-200",
+              open && "rotate-180",
+            )}
+            aria-hidden
+          />
+        </button>
+      ) : (
+        <div className="flex items-center gap-2.5 px-6 pb-4 pt-5">{heading}</div>
+      )}
+
+      <div className={cn("px-6 pb-6", collapsible && !open && "hidden")}>{children}</div>
     </section>
   );
 }
 
-/* Checkbox como alvo clicável inteiro. O input nativo solto tem ~16px de área
-   de clique; embrulhado assim o alvo vira a linha toda, e o estado marcado
-   ganha sinal visual via has-[:checked]. */
+/* Contador de caracteres como no mockup. O limite exibido é o maxLength real do
+   campo, não um número decorativo. */
+function CountedTextarea({
+  max,
+  onValueChange,
+  ...props
+}: ComponentProps<"textarea"> & { max: number; onValueChange?: (v: string) => void }) {
+  const [len, setLen] = useState(0);
+
+  return (
+    <div className="relative">
+      <Textarea
+        maxLength={max}
+        className="min-h-[88px] pb-7"
+        onChange={(e) => {
+          setLen(e.target.value.length);
+          onValueChange?.(e.target.value);
+        }}
+        {...props}
+      />
+      <span className="tnum pointer-events-none absolute bottom-2.5 right-3 text-[11px] text-ink-600">
+        {len}/{max}
+      </span>
+    </div>
+  );
+}
+
 function CheckOption({
   name,
   label,
@@ -114,9 +175,7 @@ function SuggestionPanel({
           aria-hidden
         />
       </button>
-      {open ? (
-        <div className="border-t border-ink-800 px-3.5 py-3.5">{children}</div>
-      ) : null}
+      {open ? <div className="border-t border-ink-800 px-3.5 py-3.5">{children}</div> : null}
     </div>
   );
 }
@@ -143,25 +202,24 @@ function SuggestionItem({
   );
 }
 
-function SubmitButton({ formRef }: { formRef: React.RefObject<HTMLFormElement | null> }) {
+function FormFooter({ onClear }: { onClear: () => void }) {
   const { pending } = useFormStatus();
 
-  const handleNewProject = () => {
-    if (formRef.current) {
-      formRef.current.reset();
-      const firstInput = formRef.current.querySelector("input") as HTMLInputElement;
-      if (firstInput) {
-        firstInput.focus();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-    }
-  };
-
   return (
-    // Barra de ação fixa ao rodapé da viewport enquanto o card está em vista.
-    // Sem isso o CTA fica enterrado no fim de um formulário de ~15 campos.
-    <div className="sticky bottom-0 -mx-6 -mb-6 mt-2 rounded-b-xl border-t border-ink-800 bg-white px-6 py-4 shadow-[0_-6px_16px_-6px_rgba(16,24,40,0.10)]">
+    <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5">
+      <p className="flex items-start gap-2.5 text-xs leading-relaxed text-ink-500">
+        <ShieldCheck className="mt-px size-4 shrink-0 text-go-400" aria-hidden />
+        <span>
+          Suas informações estão seguras
+          <br className="hidden sm:block" /> e não serão compartilhadas.
+        </span>
+      </p>
+
       <div className="flex flex-wrap items-center gap-3">
+        <Button type="button" variant="ghost" onClick={onClear} disabled={pending}>
+          <Trash2 className="size-4" aria-hidden />
+          Limpar formulário
+        </Button>
         <Button type="submit" disabled={pending}>
           {pending ? (
             <>
@@ -171,18 +229,10 @@ function SubmitButton({ formRef }: { formRef: React.RefObject<HTMLFormElement | 
           ) : (
             <>
               <Sparkles className="size-4" aria-hidden />
-              Gerar plano
+              Gerar plano de execução
             </>
           )}
         </Button>
-        <Button type="button" variant="ghost" onClick={handleNewProject} disabled={pending}>
-          Novo Projeto
-        </Button>
-        <span className="text-xs text-ink-500">
-          {pending
-            ? "O Kickoff está quebrando o escopo em épicos, tarefas e riscos…"
-            : "Campos marcados são obrigatórios."}
-        </span>
       </div>
     </div>
   );
@@ -256,85 +306,126 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [expandStack, setExpandStack] = useState(false);
   const [expandIntegrations, setExpandIntegrations] = useState(false);
+  const [openSections, setOpenSections] = useState<Record<number, boolean>>({
+    4: false,
+    5: false,
+    6: false,
+  });
+
+  const toggle = (step: number) =>
+    setOpenSections((s) => ({ ...s, [step]: !s[step] }));
+
+  /* Campo inválido dentro de seção fechada: abrimos a seção que o contém.
+     'invalid' não borbulha, daí o listener em captura.
+
+     flushSync é obrigatório aqui. Logo depois deste handler o navegador tenta
+     focar o campo inválido para mostrar a mensagem; com o re-render assíncrono
+     padrão a seção ainda estaria display:none nesse instante e o Chrome aborta
+     com "An invalid form control is not focusable" — a seção abria, mas o envio
+     morria sem feedback nenhum. */
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+
+    const onInvalid = (event: Event) => {
+      const host = (event.target as HTMLElement).closest<HTMLElement>("[data-section]");
+      const step = host ? Number(host.dataset.section) : 0;
+      if (!step) return;
+
+      flushSync(() => {
+        setOpenSections((s) => (s[step] ? s : { ...s, [step]: true }));
+      });
+    };
+
+    form.addEventListener("invalid", onInvalid, true);
+    return () => form.removeEventListener("invalid", onInvalid, true);
+  }, []);
+
+  const handleClear = () => {
+    formRef.current?.reset();
+    setFormValues({
+      problem: "",
+      users: "",
+      existing: "",
+      needed: "",
+      technologies: "",
+      integrations: "",
+      requireRealtime: false,
+      requireScale: false,
+      requireOffline: false,
+      requirePayments: false,
+      requireAI: false,
+    });
+    const first = formRef.current?.querySelector("input") as HTMLInputElement | null;
+    first?.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
-    <Card className="p-6">
-      <form ref={formRef} action={formAction} className="flex flex-col gap-7">
+    <Card className="overflow-hidden">
+      <form ref={formRef} action={formAction}>
         <Section step={1} title="Básico">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Nome do projeto">
-              <Input
-                name="name"
-                required
-                placeholder="Portal de entregas"
-                maxLength={120}
-              />
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Field label="Nome do projeto" required>
+              <Input name="name" required placeholder="Ex.: Portal de entregas" maxLength={120} />
             </Field>
-
             <Field label="Gerente de Projeto" hint="Responsável pela execução.">
-              <Input name="projectManager" placeholder="João Silva" maxLength={120} />
+              <Input name="projectManager" placeholder="Ex.: João Silva" maxLength={120} />
             </Field>
           </div>
         </Section>
 
         <Section step={2} title="Escopo">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field
-              label="Qual é o problema que precisa resolver?"
-              hint="Ex: controlar em planilha é lento"
-            >
-              <Input
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Field label="Qual é o problema que precisa resolver?" required>
+              <CountedTextarea
                 name="problem"
                 required
-                placeholder="Descreva o problema atual"
-                maxLength={300}
-                onChange={(e) => setFormValues({ ...formValues, problem: e.target.value })}
+                max={300}
+                placeholder="Descreva o problema atual, as dores e os impactos para o negócio…"
+                onValueChange={(v) => setFormValues((f) => ({ ...f, problem: v }))}
               />
             </Field>
-
-            <Field label="Quem são os usuários?" hint="Ex: motoristas, supervisores, gerentes">
-              <Input
+            <Field label="Quem são os usuários?" required>
+              <CountedTextarea
                 name="users"
                 required
-                placeholder="Listar os tipos de usuários"
-                maxLength={200}
+                max={200}
+                placeholder="Descreva os perfis de usuários e suas principais necessidades…"
               />
             </Field>
-
-            <Field label="O que existe hoje?" hint="Ex: ERP Neon, WhatsApp, planilha">
-              <Input
+            <Field label="O que existe hoje?" required>
+              <CountedTextarea
                 name="existing"
                 required
-                placeholder="Descrever o sistema/processo atual"
-                maxLength={300}
+                max={300}
+                placeholder="Sistema ou processo atual — ex.: ERP Neon, WhatsApp, planilha…"
               />
             </Field>
-
-            <Field label="O que precisa ser criado?" hint="Ex: app mobile, painel web, integração">
-              <Input
+            <Field label="O que precisa ser criado?" required>
+              <CountedTextarea
                 name="needed"
                 required
-                placeholder="Descrever o que será construído"
-                maxLength={300}
-                onChange={(e) => setFormValues({ ...formValues, needed: e.target.value })}
+                max={300}
+                placeholder="O que será construído — ex.: app mobile, painel web, integração…"
+                onValueChange={(v) => setFormValues((f) => ({ ...f, needed: v }))}
               />
             </Field>
           </div>
         </Section>
 
         <Section step={3} title="Técnico">
-          <div className="grid gap-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Tecnologias já usadas" hint="Ex: React, Node.js, PostgreSQL, Docker">
+          <div className="grid gap-5">
+            <div className="grid gap-5 lg:grid-cols-2">
+              <Field label="Tecnologias já usadas" hint="Ex.: Node.js, PostgreSQL, Docker">
                 <Input
                   name="technologies"
                   placeholder="Listar tecnologias existentes"
                   maxLength={300}
                 />
               </Field>
-
               <Field label="Stack preferido" hint="Opcional.">
-                <Input name="stack" placeholder="Ex: Next.js + Postgres" maxLength={200} />
+                <Input name="stack" placeholder="Ex.: React, Next.js, AWS" maxLength={200} />
               </Field>
             </div>
 
@@ -360,44 +451,56 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
           </div>
         </Section>
 
-        <Section step={4} title="Requisitos especiais">
-          <div className="grid gap-2 sm:grid-cols-2">
+        <Section
+          step={4}
+          title="Requisitos especiais"
+          collapsible
+          open={openSections[4]}
+          onToggle={() => toggle(4)}
+        >
+          <div className="grid gap-2 lg:grid-cols-2">
             <CheckOption
               name="requireRealtime"
               label="Tempo real (chat, notificações)"
-              onChange={(checked) => setFormValues({ ...formValues, requireRealtime: checked })}
+              onChange={(c) => setFormValues((f) => ({ ...f, requireRealtime: c }))}
             />
             <CheckOption
               name="requireScale"
               label="Escala alta (muitos usuários/dados)"
-              onChange={(checked) => setFormValues({ ...formValues, requireScale: checked })}
+              onChange={(c) => setFormValues((f) => ({ ...f, requireScale: c }))}
             />
             <CheckOption
               name="requireOffline"
               label="Funcionar offline"
-              onChange={(checked) => setFormValues({ ...formValues, requireOffline: checked })}
+              onChange={(c) => setFormValues((f) => ({ ...f, requireOffline: c }))}
             />
             <CheckOption
               name="requirePayments"
               label="Processar pagamentos"
-              onChange={(checked) => setFormValues({ ...formValues, requirePayments: checked })}
+              onChange={(c) => setFormValues((f) => ({ ...f, requirePayments: c }))}
             />
             <CheckOption
               name="requireAI"
               label="IA/ML"
-              onChange={(checked) => setFormValues({ ...formValues, requireAI: checked })}
+              onChange={(c) => setFormValues((f) => ({ ...f, requireAI: c }))}
             />
           </div>
         </Section>
 
-        <Section step={5} title="Integrações">
-          <div className="grid gap-4">
-            <Field label="Quais sistemas/APIs precisa integrar?" hint="Ex: ERP, CRM, Stripe, Slack">
+        <Section
+          step={5}
+          title="Integrações"
+          collapsible
+          open={openSections[5]}
+          onToggle={() => toggle(5)}
+        >
+          <div className="grid gap-5">
+            <Field label="Quais sistemas/APIs precisa integrar?" hint="Ex.: ERP, CRM, Stripe, Slack">
               <Input
                 name="integrations"
                 placeholder="Listar integrações necessárias (ou deixe em branco)"
                 maxLength={300}
-                onChange={(e) => setFormValues({ ...formValues, integrations: e.target.value })}
+                onChange={(e) => setFormValues((f) => ({ ...f, integrations: e.target.value }))}
               />
             </Field>
 
@@ -423,12 +526,18 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
           </div>
         </Section>
 
-        <Section step={6} title="Capacidade">
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="Tamanho do time" hint="Pessoas dedicadas.">
+        <Section
+          step={6}
+          title="Capacidade e prazos"
+          collapsible
+          open={openSections[6]}
+          onToggle={() => toggle(6)}
+        >
+          <div className="grid gap-5 sm:grid-cols-3">
+            <Field label="Tamanho do time" hint="Pessoas dedicadas." required>
               <Input name="teamSize" type="number" min={1} max={50} defaultValue={3} required />
             </Field>
-            <Field label="Horas por semana" hint="Por pessoa, tempo efetivo.">
+            <Field label="Horas por semana" hint="Por pessoa, tempo efetivo." required>
               <Input name="weeklyHours" type="number" min={1} max={60} defaultValue={30} required />
             </Field>
             <Field label="Prazo desejado" hint="Opcional.">
@@ -438,12 +547,12 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
         </Section>
 
         {state.error ? (
-          <p className="rounded-lg border border-stop-400/30 bg-stop-400/5 px-3 py-2 text-sm text-stop-400">
+          <p className="mx-6 mt-5 rounded-lg border border-stop-400/30 bg-stop-400/5 px-3 py-2 text-sm text-stop-400">
             {state.error}
           </p>
         ) : null}
 
-        <SubmitButton formRef={formRef} />
+        <FormFooter onClear={handleClear} />
       </form>
     </Card>
   );
