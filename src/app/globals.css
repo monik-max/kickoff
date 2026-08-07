@@ -1,28 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  /* Escala neutra puxada para o navy da marca, não para o cinza puro. */
-  --color-ink-950: #080d1a;
-  --color-ink-900: #0d1424;
-  --color-ink-850: #111a2d;
-  --color-ink-800: #182238;
-  --color-ink-700: #24304a;
-  --color-ink-600: #35435f;
-  --color-ink-400: #7b87a3;
-  --color-ink-300: #a6b0c6;
-  --color-ink-100: #e6e9f2;
+  /* Light mode - escala neutra clara */
+  --color-ink-950: #ffffff;
+  --color-ink-900: #f9fafb;
+  --color-ink-850: #f3f4f6;
+  --color-ink-800: #e5e7eb;
+  --color-ink-700: #d1d5db;
+  --color-ink-600: #9ca3af;
+  --color-ink-400: #6b7280;
+  --color-ink-300: #4b5563;
+  --color-ink-100: #111827;
 
-  /* Violeta da marca. O 500 é o da logo e serve para preenchimento sólido;
-     o 300 é a versão clara, para texto e ícones sobre fundo escuro — o 500
-     como texto pequeno não alcança contraste suficiente. */
-  --color-brand-300: #b3a8ff;
-  --color-brand-400: #7361f5;
+  /* Violeta da marca - versão clara */
+  --color-brand-300: #7c3aed;
+  --color-brand-400: #6d28d9;
   --color-brand-500: #5b45e8;
-  --color-brand-600: #4633c2;
+  --color-brand-600: #4c1d95;
 
-  --color-go-400: #4ade80;
-  --color-warn-400: #fb923c;
-  --color-stop-400: #f87171;
+  --color-go-400: #16a34a;
+  --color-warn-400: #ea580c;
+  --color-stop-400: #dc2626;
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", sans-serif;
@@ -31,7 +29,7 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
@@ -41,7 +39,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-brand-500);
+  background: var(--color-brand-300);
   color: #ffffff;
 }
 
@@ -53,7 +51,10 @@ body {
 input,
 textarea,
 select {
-  color-scheme: dark;
+  color-scheme: light;
+  background-color: var(--color-ink-850);
+  color: var(--color-ink-100);
+  border-color: var(--color-ink-700);
 }
 
 *:focus-visible {
