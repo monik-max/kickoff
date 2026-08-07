@@ -271,3 +271,161 @@ export const PRICING_HINT: Record<Pricing, string> = {
 };
 
 export const ALL_TOOLS_COUNT = CATEGORIES.reduce((n, c) => n + c.tools.length, 0);
+
+/* ------------------------------------------------------------------ */
+
+/**
+ * Escolha de linguagem por objetivo. Organizado pelo que a pessoa quer
+ * construir, não pela linguagem — quem está começando chega com "quero fazer
+ * um app", não com "quero saber sobre Kotlin".
+ */
+export type LanguagePick = {
+  slug: string;
+  /** O que a pessoa quer construir. */
+  goal: string;
+  /** A aposta mais segura, e por quê. */
+  main: string;
+  mainWhy: string;
+  /** Alternativas que valem consideração. */
+  others: { lang: string; why: string }[];
+  /** Erro comum de quem está escolhendo agora. */
+  trap: string;
+};
+
+export const LANGUAGE_PICKS: LanguagePick[] = [
+  {
+    slug: "primeira",
+    goal: "Aprender a programar do zero",
+    main: "Python",
+    mainWhy:
+      "Sintaxe limpa, pouca cerimônia e mensagem de erro legível. Você gasta energia entendendo lógica, não brigando com ponto e vírgula.",
+    others: [
+      { lang: "JavaScript", why: "Roda no navegador sem instalar nada e dá resultado visual rápido, o que sustenta a motivação." },
+    ],
+    trap: "Ficar meses escolhendo a linguagem 'certa'. A primeira serve para aprender a pensar; a segunda você aprende em semanas.",
+  },
+  {
+    slug: "web",
+    goal: "Site ou aplicação web",
+    main: "TypeScript",
+    mainWhy:
+      "JavaScript com tipos — e JavaScript é a única linguagem que o navegador executa nativamente, então para a interface não há escolha real. Os tipos acusam erro antes de rodar, e com Node.js a mesma linguagem cobre o servidor.",
+    others: [
+      { lang: "JavaScript puro", why: "Sem etapa de compilação. Serve para script pequeno e para aprender a base antes de somar os tipos." },
+      { lang: "PHP", why: "Enorme em web no Brasil, com Laravel e WordPress. Hospedagem barata e muita vaga." },
+      { lang: "Python", why: "Com Django ou FastAPI no backend, se você já sabe Python." },
+    ],
+    trap: "Aprender JavaScript e pular TypeScript. Migrar depois custa mais do que começar tipado.",
+  },
+  {
+    slug: "backend",
+    goal: "API e regras de negócio",
+    main: "TypeScript (Node.js)",
+    mainWhy:
+      "Mesma linguagem do frontend: um vocabulário só para o projeto inteiro, e você troca de camada sem trocar de cabeça.",
+    others: [
+      { lang: "Python", why: "Ótimo se o sistema envolve dados ou IA — o ecossistema já está lá." },
+      { lang: "Java / C#", why: "Padrão em empresa grande e banco. Verboso, previsível, muita vaga formal." },
+      { lang: "Go", why: "Para serviço que precisa aguentar carga com pouco recurso. Simples de aprender, difícil de escrever mal." },
+      { lang: "PHP", why: "Laravel entrega muito rápido e é forte no mercado brasileiro." },
+    ],
+    trap: "Escolher a linguagem mais rápida em benchmark. Gargalo de projeto real quase sempre é banco de dados, não linguagem.",
+  },
+  {
+    slug: "mobile",
+    goal: "Aplicativo de celular",
+    main: "React Native (TypeScript)",
+    mainWhy:
+      "Um código para Android e iOS. Se você já sabe React, é a distância mais curta entre saber web e ter app publicado.",
+    others: [
+      { lang: "Flutter (Dart)", why: "Desempenho e visual mais consistentes entre plataformas. Dart é linguagem nova para aprender." },
+      { lang: "Kotlin", why: "Nativo Android. Melhor acesso a recurso do aparelho e desempenho." },
+      { lang: "Swift", why: "Nativo iOS. Obrigatório para recurso avançado da Apple." },
+    ],
+    trap: "Ir de nativo antes de validar a ideia — dois códigos, dois times, duas publicações. Multiplataforma primeiro, nativo quando doer.",
+  },
+  {
+    slug: "dados",
+    goal: "Análise de dados e relatórios",
+    main: "Python",
+    mainWhy:
+      "Pandas, NumPy e a maior coleção de bibliotecas de dados que existe. É onde a área inteira conversa.",
+    others: [
+      { lang: "SQL", why: "Não é opcional. Toda análise passa por consultar banco — aprenda junto, não depois." },
+      { lang: "R", why: "Forte em estatística e pesquisa acadêmica. Fora da academia, Python domina." },
+    ],
+    trap: "Pular SQL achando que Python resolve tudo. Filtrar no banco em vez de na memória é a diferença entre segundos e horas.",
+  },
+  {
+    slug: "ia",
+    goal: "Inteligência artificial e aprendizado de máquina",
+    main: "Python",
+    mainWhy:
+      "PyTorch, TensorFlow e praticamente todo artigo e tutorial da área. Não há segundo lugar próximo.",
+    others: [
+      { lang: "TypeScript", why: "Suficiente para consumir API de modelo pronto, que é o caso da maioria dos produtos." },
+    ],
+    trap: "Achar que precisa treinar modelo do zero. Quase todo produto com IA hoje só consome API — e isso não exige Python.",
+  },
+  {
+    slug: "automacao",
+    goal: "Automatizar tarefa repetitiva",
+    main: "Python",
+    mainWhy:
+      "Lê planilha, mexe em arquivo, chama API e raspa site com poucas linhas. Melhor retorno por hora investida.",
+    others: [
+      { lang: "Bash / PowerShell", why: "Para orquestrar comandos do sistema. Bash em Linux e Mac, PowerShell em Windows." },
+      { lang: "JavaScript", why: "Se a automação envolve navegador, com Playwright ou Puppeteer." },
+    ],
+    trap: "Automatizar algo que roda uma vez por ano. O tempo de automatizar precisa caber no tempo economizado.",
+  },
+  {
+    slug: "desktop",
+    goal: "Programa de computador",
+    main: "Electron ou Tauri (TypeScript)",
+    mainWhy:
+      "Aproveita conhecimento de web. Tauri gera aplicativo bem menor que Electron, ao custo de aprender um pouco de Rust.",
+    others: [
+      { lang: "C#", why: "Nativo Windows, com boa integração ao sistema." },
+      { lang: "Python", why: "Para ferramenta interna simples, com PyQt ou Tkinter." },
+    ],
+    trap: "Escolher desktop quando web resolveria. Web não exige instalação nem atualização na máquina do usuário.",
+  },
+  {
+    slug: "jogos",
+    goal: "Jogos",
+    main: "C# (Unity)",
+    mainWhy:
+      "Maior comunidade, mais tutorial e publica para praticamente qualquer plataforma.",
+    others: [
+      { lang: "GDScript (Godot)", why: "Motor open source, leve e gratuito. Linguagem própria, parecida com Python." },
+      { lang: "C++ (Unreal)", why: "Padrão em jogo de grande porte e gráfico pesado. Curva íngreme." },
+    ],
+    trap: "Começar pelo jogo dos sonhos. Termine três jogos pequenos antes — jogo é o tipo de projeto que mais fica pela metade.",
+  },
+  {
+    slug: "embarcado",
+    goal: "Hardware, IoT e sistemas embarcados",
+    main: "C",
+    mainWhy:
+      "Controle direto de memória e roda em microcontrolador com poucos kilobytes. Continua sendo a base da área.",
+    others: [
+      { lang: "C++", why: "Quando o dispositivo comporta abstração e o projeto é maior." },
+      { lang: "Rust", why: "Segurança de memória sem coletor de lixo. Crescendo em embarcado." },
+      { lang: "MicroPython", why: "Python em microcontrolador. Excelente para aprender e prototipar." },
+    ],
+    trap: "Ignorar limite de memória e energia. Em embarcado, a restrição é o projeto — não um detalhe de otimização.",
+  },
+  {
+    slug: "performance",
+    goal: "Alto desempenho e sistemas de base",
+    main: "Rust",
+    mainWhy:
+      "Velocidade de C sem as falhas de memória que geram a maior parte das vulnerabilidades graves. O compilador é rígido e ensina.",
+    others: [
+      { lang: "Go", why: "Bem mais simples de aprender, com concorrência fácil. Excelente para serviço de rede." },
+      { lang: "C++", why: "Onde já existe base legada e ecossistema consolidado." },
+    ],
+    trap: "Escolher por desempenho antes de ter problema de desempenho. Otimizar cedo custa prazo e legibilidade.",
+  },
+];

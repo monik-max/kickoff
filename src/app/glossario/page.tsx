@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ALL_TOOLS_COUNT, CATEGORIES, PRICING_HINT, PRICING_LABEL } from "@/lib/glossary";
 import { GlossaryBrowser } from "./glossary-browser";
+import { LanguageGuide } from "./language-guide";
 
 export const metadata: Metadata = {
   title: "Glossário de ferramentas — Kickoff",
@@ -36,7 +37,14 @@ export default function GlossarioPage() {
         </p>
       </header>
 
-      <GlossaryBrowser total={ALL_TOOLS_COUNT} />
+      <LanguageGuide />
+
+      <section>
+        <h2 className="mb-4 text-[13px] font-semibold uppercase tracking-[0.08em] text-ink-300">
+          Catálogo de ferramentas
+        </h2>
+        <GlossaryBrowser total={ALL_TOOLS_COUNT} />
+      </section>
     </div>
   );
 }
