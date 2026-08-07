@@ -4,7 +4,6 @@ import { ArrowRight, ListTree, Sparkles, TrendingUp, ShieldCheck, Flag } from "l
 import { GuidedForm } from "@/components/guided-form";
 import { Card, EmptyState, SectionTitle } from "@/components/ui";
 import { listProjects } from "@/db/queries";
-import { hasApiKey } from "@/lib/planner";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +48,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <GuidedForm hasKey={hasApiKey()} />
+      <GuidedForm />
 
       <section className="mt-4">
         <SectionTitle hint={`${projects.length} no histórico`}>Projetos</SectionTitle>

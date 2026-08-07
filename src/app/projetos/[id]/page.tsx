@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Flag, HelpCircle, Save, Home } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Flag, HelpCircle } from "lucide-react";
 
 import { TaskBoard } from "@/components/task-board";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/project-tools";
 import { SaveButton } from "@/components/save-button";
 import { NewProjectButton } from "@/components/new-project-button";
-import { Button, Card, EmptyState, SectionTitle, Stat } from "@/components/ui";
+import { Card, EmptyState, SectionTitle, Stat } from "@/components/ui";
 import { getProject } from "@/db/queries";
 import { addWeeks, estimate, formatHours } from "@/lib/estimate";
 import { planToMarkdown } from "@/lib/export-markdown";

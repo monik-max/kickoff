@@ -9,6 +9,22 @@ export interface StackItem {
   options: string;
 }
 
+/**
+ * Casa palavra inteira, não pedaço de palavra.
+ *
+ * `includes()` com termos curtos dá falso positivo em português: "ai" casa com
+ * "painel", "email" e "mais"; "ia" casa com "diário"; "ci" casa com "precisa";
+ * "log" casa com "catálogo". Isso fazia a sugestão de IA/ML aparecer para quem
+ * só escreveu "painel web".
+ *
+ * \p{L} cobre acentuação, então "inteligência" não é cortada no meio.
+ */
+function hasWord(text: string, ...words: string[]): boolean {
+  return words.some((word) =>
+    new RegExp(`(^|[^\\p{L}\\p{N}])${word}([^\\p{L}\\p{N}]|$)`, "iu").test(text),
+  );
+}
+
 export function suggestStackFromScope(data: {
   problem?: string;
   needed?: string;
@@ -32,7 +48,7 @@ export function suggestStackFromScope(data: {
   }
 
   // === MOBILE ===
-  if (input.includes("app") || input.includes("mobile") || input.includes("ios") || input.includes("android")) {
+  if (input.includes("mobile") || input.includes("android") || hasWord(input, "app", "ios")) {
     items.push({
       layer: "Mobile",
       description: "Aplicativo nativo ou multiplataforma",
@@ -107,7 +123,7 @@ export function suggestStackFromScope(data: {
   }
 
   // === IA ===
-  if (data.requireAI || input.includes("ia") || input.includes("ai") || input.includes("inteligência")) {
+  if (data.requireAI || input.includes("inteligência") || hasWord(input, "ia", "ai", "ml")) {
     items.push({
       layer: "IA/ML",
       description: "Inteligência artificial e automação",
@@ -172,7 +188,7 @@ export function suggestIntegrationsFromScope(data: {
   const input = `${data.problem} ${data.needed} ${data.existing} ${data.integrations}`.toLowerCase();
 
   // === ERP/CRM ===
-  if (input.includes("erp") || input.includes("sap") || input.includes("neon")) {
+  if (hasWord(input, "erp", "sap", "neon")) {
     suggestions.push({
       name: "ERP/Sistemas Legados",
       description: "Integre seu sistema antigo com a nova plataforma sem perder dados",
@@ -238,7 +254,7 @@ export function suggestIntegrationsFromScope(data: {
   }
 
   // === IA ===
-  if (data.requireAI || input.includes("ia") || input.includes("ai") || input.includes("inteligência")) {
+  if (data.requireAI || input.includes("inteligência") || hasWord(input, "ia", "ai", "ml")) {
     suggestions.push({
       name: "IA e Machine Learning",
       description: "Adicione inteligência artificial, automação e análise preditiva",
@@ -256,7 +272,7 @@ export function suggestIntegrationsFromScope(data: {
   }
 
   // === GIT/DEVOPS ===
-  if (input.includes("deploy") || input.includes("ci") || input.includes("cd")) {
+  if (input.includes("deploy") || hasWord(input, "ci", "cd", "ci/cd")) {
     suggestions.push({
       name: "CI/CD e Automação",
       description: "Automatize testes, builds e deployments para cada mudança no código",
@@ -265,7 +281,7 @@ export function suggestIntegrationsFromScope(data: {
   }
 
   // === MONITORAMENTO ===
-  if (input.includes("erro") || input.includes("log") || input.includes("monitor") || input.includes("performance")) {
+  if (input.includes("erro") || input.includes("monitor") || input.includes("performance") || hasWord(input, "log", "logs")) {
     suggestions.push({
       name: "Monitoramento e Logs",
       description: "Acompanhe erros, performance e saúde da aplicação em produção",

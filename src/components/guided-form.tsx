@@ -15,9 +15,23 @@ import { ChevronDown, Loader2, ShieldCheck, Sparkles, Trash2 } from "lucide-reac
 import { createProject, type FormState } from "@/app/actions";
 import { Button, Card, Field, Input, Textarea } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { suggestStackFromScope, suggestIntegrationsFromScope, type StackItem } from "@/lib/suggestions";
+import { suggestStackFromScope, suggestIntegrationsFromScope } from "@/lib/suggestions";
 
-function buildDescription(data: Record<string, any>): string {
+type DescriptionInput = {
+  problem: FormDataEntryValue | null;
+  users: FormDataEntryValue | null;
+  existing: FormDataEntryValue | null;
+  needed: FormDataEntryValue | null;
+  technologies: FormDataEntryValue | null;
+  integrations: FormDataEntryValue | null;
+  requireRealtime: boolean;
+  requireScale: boolean;
+  requireOffline: boolean;
+  requirePayments: boolean;
+  requireAI: boolean;
+};
+
+function buildDescription(data: DescriptionInput): string {
   const parts = [];
 
   if (data.problem) parts.push(`Problema: ${data.problem}`);
@@ -238,7 +252,7 @@ function FormFooter({ onClear }: { onClear: () => void }) {
   );
 }
 
-export function GuidedForm({ hasKey }: { hasKey: boolean }) {
+export function GuidedForm() {
   const [formValues, setFormValues] = useState({
     problem: "",
     users: "",
@@ -253,17 +267,12 @@ export function GuidedForm({ hasKey }: { hasKey: boolean }) {
     requireAI: false,
   });
 
-  const [suggestedStack, setSuggestedStack] = useState<StackItem[]>([]);
-  const [suggestedIntegrations, setSuggestedIntegrations] = useState<any[]>([]);
-
-  // Atualizar sugestões em tempo real
-  useEffect(() => {
-    const stack = suggestStackFromScope(formValues);
-    setSuggestedStack(stack);
-
-    const integrations = suggestIntegrationsFromScope(formValues);
-    setSuggestedIntegrations(integrations);
-  }, [formValues]);
+  /* Sugestões são derivadas puras de formValues — calculadas na renderização,
+     não guardadas em estado. Antes isto era useState + useEffect, o que gerava
+     um render em cascata a cada tecla digitada (e o efeito nunca sincronizou
+     nada externo, que é para o que useEffect existe). */
+  const suggestedStack = suggestStackFromScope(formValues);
+  const suggestedIntegrations = suggestIntegrationsFromScope(formValues);
 
   const [state, formAction] = useActionState<FormState, FormData>(
     async (_prev, formData) => {

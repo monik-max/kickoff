@@ -89,7 +89,9 @@ export async function getProject(id: string): Promise<ProjectDetail | null> {
 export async function saveProjectVersion(
   projectId: string,
   changeType: "criação" | "edição-tarefa" | "edição-projeto" | "edição-risco" | "edição-marco",
-  snapshot: any,
+  // `unknown`: aqui o snapshot é só JSON.stringify'ado. Tipar como
+  // ProjectSnapshot criaria import circular queries <-> version-snapshot.
+  snapshot: unknown,
   description?: string
 ) {
   const db = await getDb();
@@ -117,9 +119,12 @@ export async function getProjectHistory(projectId: string): Promise<ProjectVersi
 }
 
 /**
- * Recupera um snapshot específico
+ * Recupera um snapshot específico.
+ *
+ * NOTA: sem chamadas hoje. Retorna `unknown` porque o valor vem de JSON.parse —
+ * quem consumir precisa validar antes de usar.
  */
-export async function getVersionSnapshot(versionId: string): Promise<any | null> {
+export async function getVersionSnapshot(versionId: string): Promise<unknown | null> {
   const db = await getDb();
 
   const [version] = await db

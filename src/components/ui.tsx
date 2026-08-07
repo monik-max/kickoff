@@ -90,11 +90,13 @@ export function Field({
 const controlClass =
   "h-10 w-full rounded-lg border border-ink-700 bg-white px-3 text-sm text-ink-100 placeholder:text-ink-600 transition-shadow hover:border-ink-600 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/12";
 
-export function Input({ className, ref, ...props }: ComponentProps<"input"> & { ref?: any }) {
+// No React 19 `ref` é uma prop comum, então ComponentProps já a inclui — a
+// intersecção `& { ref?: any }` que existia aqui era redundante.
+export function Input({ className, ref, ...props }: ComponentProps<"input">) {
   return <input ref={ref} className={cn(controlClass, className)} {...props} />;
 }
 
-export function Textarea({ className, ref, ...props }: ComponentProps<"textarea"> & { ref?: any }) {
+export function Textarea({ className, ref, ...props }: ComponentProps<"textarea">) {
   return (
     <textarea
       ref={ref}

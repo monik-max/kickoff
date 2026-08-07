@@ -37,7 +37,9 @@ export function TaskEditModal({
     priority: task.priority,
   });
 
-  const [state, formAction] = useActionState(
+  // `state` não é lido: o resultado é tratado no próprio callback (fecha o
+  // modal em caso de sucesso), então só a action interessa aqui.
+  const [, formAction] = useActionState<Awaited<ReturnType<typeof updateTask>> | null>(
     async () => {
       const result = await updateTask(task.id, projectId, {
         ...formData,
@@ -49,12 +51,13 @@ export function TaskEditModal({
       }
       return result;
     },
-    null as any,
+    null,
   );
 
-  const handleChange = (
-    field: keyof typeof formData,
-    value: any,
+  // O valor é sempre do mesmo tipo do campo que está sendo alterado.
+  const handleChange = <K extends keyof typeof formData>(
+    field: K,
+    value: (typeof formData)[K],
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };

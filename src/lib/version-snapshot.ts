@@ -1,7 +1,12 @@
+import type { ProjectDetail } from "@/db/queries";
+
 /**
- * Cria um snapshot completo do projeto pra arquivo histórico
+ * Cria um snapshot completo do projeto pra arquivo histórico.
+ *
+ * `import type` é intencional: queries.ts é server-only e a importação de tipo
+ * some na compilação, então nada de servidor vaza pro bundle.
  */
-export function createProjectSnapshot(detail: any) {
+export function createProjectSnapshot(detail: ProjectDetail) {
   return {
     project: {
       id: detail.project.id,
@@ -13,12 +18,12 @@ export function createProjectSnapshot(detail: any) {
       targetDate: detail.project.targetDate,
       summary: detail.project.summary,
     },
-    epics: detail.epics.map((epic: any) => ({
+    epics: detail.epics.map((epic) => ({
       id: epic.id,
       title: epic.title,
       summary: epic.summary,
       orderIndex: epic.orderIndex,
-      tasks: epic.tasks.map((task: any) => ({
+      tasks: epic.tasks.map((task) => ({
         id: task.id,
         title: task.title,
         description: task.description,
@@ -30,20 +35,20 @@ export function createProjectSnapshot(detail: any) {
         pessimisticHours: task.pessimisticHours,
       })),
     })),
-    risks: detail.risks.map((risk: any) => ({
+    risks: detail.risks.map((risk) => ({
       id: risk.id,
       title: risk.title,
       impact: risk.impact,
       probability: risk.probability,
       mitigation: risk.mitigation,
     })),
-    milestones: detail.milestones.map((milestone: any) => ({
+    milestones: detail.milestones.map((milestone) => ({
       id: milestone.id,
       title: milestone.title,
       description: milestone.description,
       week: milestone.week,
     })),
-    questions: detail.questions.map((q: any) => ({
+    questions: detail.questions.map((q) => ({
       id: q.id,
       text: q.text,
       kind: q.kind,
@@ -51,10 +56,17 @@ export function createProjectSnapshot(detail: any) {
   };
 }
 
+/** O formato gravado em project_versions.snapshot. */
+export type ProjectSnapshot = ReturnType<typeof createProjectSnapshot>;
+
 /**
- * Detecta mudanças entre dois snapshots
+ * Detecta mudanças entre dois snapshots.
+ *
+ * NOTA: ainda não é chamada em lugar nenhum — a UI de histórico
+ * (components/version-history.tsx) só lista metadados das versões, sem comparar
+ * conteúdo.
  */
-export function detectChanges(oldSnapshot: any, newSnapshot: any) {
+export function detectChanges(oldSnapshot: ProjectSnapshot, newSnapshot: ProjectSnapshot) {
   const changes: string[] = [];
 
   // Projeto
@@ -69,16 +81,16 @@ export function detectChanges(oldSnapshot: any, newSnapshot: any) {
   }
 
   // Tarefas adicionadas/modificadas
-  const oldTaskIds = new Set(oldSnapshot.epics.flatMap((e: any) => e.tasks.map((t: any) => t.id)));
-  const newTasks = newSnapshot.epics.flatMap((e: any) => e.tasks);
+  const oldTaskIds = new Set(oldSnapshot.epics.flatMap((e) => e.tasks.map((t) => t.id)));
+  const newTasks = newSnapshot.epics.flatMap((e) => e.tasks);
 
-  newTasks.forEach((task: any) => {
+  newTasks.forEach((task) => {
     if (!oldTaskIds.has(task.id)) {
       changes.push(`✓ Tarefa adicionada: "${task.title}"`);
     } else {
       const oldTask = oldSnapshot.epics
-        .flatMap((e: any) => e.tasks)
-        .find((t: any) => t.id === task.id);
+        .flatMap((e) => e.tasks)
+        .find((t) => t.id === task.id);
       if (oldTask && oldTask.status !== task.status) {
         changes.push(`Status de "${task.title}": ${oldTask.status} → ${task.status}`);
       }

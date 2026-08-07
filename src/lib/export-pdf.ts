@@ -1,12 +1,11 @@
 import type { ProjectDetail } from "@/db/queries";
+import type { Task } from "@/db/schema";
 
 /**
  * Gera um arquivo PDF do plano do projeto.
  * Usa a API de impressão do navegador (print-to-PDF).
  */
 export function generatePlanPDF(detail: ProjectDetail, filename: string) {
-  const { project, epics, risks, milestones, questions } = detail;
-
   // Constrói o HTML do plano
   const html = generatePlanHTML(detail);
 
@@ -22,6 +21,11 @@ export function generatePlanPDF(detail: ProjectDetail, filename: string) {
   doc.write(html);
   doc.close();
 
+  // O "salvar como PDF" do navegador sugere o título do documento como nome do
+  // arquivo. Antes o `filename` recebido era ignorado e valia o <title> do HTML
+  // (o nome do projeto); agora o parâmetro passa a valer de fato.
+  doc.title = filename.replace(/\.pdf$/i, "");
+
   // Espera o conteúdo carregar e imprime
   setTimeout(() => {
     iframe.contentWindow?.print();
@@ -36,15 +40,12 @@ function generatePlanHTML(detail: ProjectDetail): string {
   const premissas = questions.filter((q) => q.kind === "premissa");
   const perguntas = questions.filter((q) => q.kind === "pergunta");
 
-  const pertExpected = (task: any) =>
+  const pertExpected = (task: Task) =>
     (task.optimisticHours + 4 * task.likelyHours + task.pessimisticHours) / 6;
 
   const allTasks = epics.flatMap((e) => e.tasks);
   const totalPERT = allTasks.reduce((sum, t) => sum + pertExpected(t), 0);
   const totalWeeks = (totalPERT / (project.teamSize * project.weeklyHours)).toFixed(1);
-
-  // Gera QR code (data URL simulada - em produção usar library QR)
-  const projectUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   return `
 <!DOCTYPE html>
@@ -206,7 +207,7 @@ function generatePlanHTML(detail: ProjectDetail): string {
     <h2>3. Marcos</h2>
     ${milestones
       .map(
-        (m, idx) => `
+        (m) => `
       <p><strong>Semana ${m.week} - ${m.title}</strong></p>
       <p>${m.description}</p>
     `

@@ -19,6 +19,10 @@ function TopBar() {
   return (
     <div className="border-b border-ink-800 bg-white">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-8 px-6 py-3">
+        {/* next/image não ajuda aqui: o logo é um SVG estático de ~700 bytes,
+            que não se beneficia de redimensionamento nem de conversão de
+            formato, e serví-lo pelo next/image exigiria dangerouslyAllowSVG. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/kickoff-logo.svg" alt="Kickoff" className="h-8 shrink-0" />
 
         <div className="hidden items-center gap-7 md:flex">
@@ -68,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <footer className="border-t border-ink-800/80 py-8">
           <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-3 px-6">
+            {/* eslint-disable-next-line @next/next/no-img-element -- SVG estático, ver nota no TopBar */}
             <img src="/kickoff-logo.svg" alt="Kickoff" className="h-7" />
             <p className="text-center text-xs text-ink-500">
               Estimativas em três pontos (PERT). O prazo é uma faixa de

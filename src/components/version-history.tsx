@@ -1,16 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Clock, ChevronDown } from "lucide-react";
 import type { ProjectVersion } from "@/db/schema";
-import { Button } from "@/components/ui";
 
 interface VersionHistoryProps {
-  projectId: string;
   versions: ProjectVersion[];
 }
 
-export function VersionHistory({ projectId, versions }: VersionHistoryProps) {
+export function VersionHistory({ versions }: VersionHistoryProps) {
   const [expanded, setExpanded] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<ProjectVersion | null>(null);
 
@@ -76,7 +74,7 @@ export function VersionHistory({ projectId, versions }: VersionHistoryProps) {
             <p className="text-xs text-ink-500">Nenhuma versão salva ainda</p>
           ) : (
             <div className="max-h-64 overflow-y-auto space-y-1">
-              {versions.map((version, idx) => (
+              {versions.map((version) => (
                 <button
                   key={version.id}
                   onClick={() => setSelectedVersion(version)}
