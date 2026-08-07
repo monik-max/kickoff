@@ -102,12 +102,7 @@ export default async function Home() {
         </div>
 
         {/* Right: Sidebar */}
-        <aside className="space-y-6 lg:sticky lg:top-8 relative">
-          {/* Watermark K behind sidebar */}
-          <div className="absolute -inset-24 pointer-events-none -z-10 opacity-15 overflow-hidden">
-            <img src="/kickoff-k-icon.svg" alt="" className="w-full h-full object-cover scale-150" aria-hidden />
-          </div>
-
+        <aside className="space-y-6 lg:sticky lg:top-8">
           <Card className="p-5">
             <SidebarSection
               icon={CheckCircle2}
