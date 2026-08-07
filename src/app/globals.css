@@ -36,32 +36,26 @@
 
 body {
   background:
-    /* Grid pattern */
+    /* Subtle grid pattern */
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 49px,
-      rgba(91, 69, 232, 0.03) 49px,
-      rgba(91, 69, 232, 0.03) 50px
+      transparent 79px,
+      rgba(91, 69, 232, 0.02) 79px,
+      rgba(91, 69, 232, 0.02) 80px
     ),
     repeating-linear-gradient(
       90deg,
       transparent,
-      transparent 49px,
-      rgba(91, 69, 232, 0.03) 49px,
-      rgba(91, 69, 232, 0.03) 50px
+      transparent 79px,
+      rgba(91, 69, 232, 0.02) 79px,
+      rgba(91, 69, 232, 0.02) 80px
     ),
-    /* Radial gradient - top left */
-    radial-gradient(
-      ellipse 60% 80% at 20% 10%,
-      rgba(91, 69, 232, 0.25),
-      transparent 50%
-    ),
-    /* Radial gradient - bottom right */
-    radial-gradient(
-      ellipse 60% 60% at 80% 90%,
-      rgba(91, 69, 232, 0.15),
-      transparent 50%
+    /* Very subtle top gradient */
+    linear-gradient(
+      180deg,
+      rgba(91, 69, 232, 0.08) 0%,
+      transparent 40%
     ),
     /* Base color */
     var(--color-ink-950);
