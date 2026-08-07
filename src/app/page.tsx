@@ -62,11 +62,6 @@ export default async function Home() {
         <span className="text-sm text-ink-400 uppercase tracking-wider">Planeje melhor. Construa com mais impacto.</span>
       </div>
 
-      {/* Watermark Background */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none -z-10 opacity-5">
-        <img src="/kickoff-k-icon.svg" alt="" className="w-96 h-96" aria-hidden />
-      </div>
-
       {/* Main Content: Hero + Form + Sidebar */}
       <div className="grid gap-8 lg:grid-cols-3 relative">
         {/* Left: Hero + Features + Form (2 columns wide on desktop) */}
@@ -107,7 +102,12 @@ export default async function Home() {
         </div>
 
         {/* Right: Sidebar */}
-        <aside className="space-y-6 lg:sticky lg:top-8">
+        <aside className="space-y-6 lg:sticky lg:top-8 relative">
+          {/* Watermark K behind sidebar */}
+          <div className="absolute -inset-12 pointer-events-none -z-10 opacity-10 overflow-hidden">
+            <img src="/kickoff-k-icon.svg" alt="" className="w-full h-full object-cover" aria-hidden />
+          </div>
+
           <Card className="p-5">
             <SidebarSection
               icon={CheckCircle2}
